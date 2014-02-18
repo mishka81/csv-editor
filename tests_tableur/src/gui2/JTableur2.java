@@ -87,14 +87,17 @@ public class JTableur2 extends JPanel{
 		int numeroColonne = 0;
 		int numeroLigne = 0;
 		
+		
+		
+		
 		boolean firstCellule=false;
 		while (numeroLigne < modele.getNbLignes()) {
 			//Récupération de la ligne
 			if (numeroLigne == listeLigne.size()) {
-				int y = 0;
+				int y = HAUTEUR_ENTETE_COLONNE + HAUTEUR_POIGNEE_ENTETE_LIGNE;
 				if (numeroLigne != 0) {
 					JLigne jLignePrecedente = listeLigne.get(numeroLigne - 1);
-					y = jLignePrecedente.getY() + jLignePrecedente.getHeight(); 
+					y = jLignePrecedente.getY() + HAUTEUR_POIGNEE_ENTETE_LIGNE + jLignePrecedente.getHeight(); 
 				}
 				
 				listeLigne.add(new JLigne(numeroLigne, numeroLigne, y, 30));
@@ -108,10 +111,10 @@ public class JTableur2 extends JPanel{
 					//Il y a une donnée saisie à ces coordonnées
 					//Récupération de la colonne
 					while (numeroColonne == listeColonne.size()) {
-						int x = 0;
+						int x = LARGEUR_NUMERO_LIGNE + LARGEUR_POIGNEE_ENTETE_COLONNE;
 						if (numeroColonne != 0) {
 							JColonne jColonnePrecedente = listeColonne.get(numeroColonne - 1);
-							x = jColonnePrecedente.getX() + jColonnePrecedente.getWidth(); 
+							x = jColonnePrecedente.getX() + LARGEUR_POIGNEE_ENTETE_COLONNE + jColonnePrecedente.getWidth(); 
 						}
 						
 						listeColonne.add(new JColonne(numeroColonne, numeroColonne, x, 100));
@@ -124,6 +127,7 @@ public class JTableur2 extends JPanel{
 					this.add(cellule);
 					ligne.addCellule(cellule);
 					colonne.addCellule(cellule);
+System.out.println(ligne.getY());
 					springLayout.putConstraint(SpringLayout.NORTH, cellule,
 			                ligne.getY(),
 			                SpringLayout.NORTH, this);
@@ -140,6 +144,32 @@ public class JTableur2 extends JPanel{
 				numeroColonne++;
 			}
 			numeroLigne++;
+		}
+		
+		//Création des entêtes de colonnes
+		int droiteColonnePrecedente = LARGEUR_NUMERO_LIGNE;
+		for (JColonne colonne : listeColonne) {
+			int gaucheColonne = droiteColonnePrecedente + LARGEUR_POIGNEE_ENTETE_COLONNE;
+			colonne.setLocation(gaucheColonne, 0);
+			this.add(colonne);
+			springLayout.putConstraint(SpringLayout.WEST, colonne,
+					gaucheColonne,
+	                SpringLayout.WEST, this);
+			System.out.println(colonne.getBounds());
+			droiteColonnePrecedente = colonne.getX() + colonne.getWidth();
+		}
+		
+		//création des lignes
+		int basLignePrecedente = HAUTEUR_ENTETE_COLONNE;
+		for (JLigne ligne : listeLigne) {
+			int hautLigne = basLignePrecedente + HAUTEUR_POIGNEE_ENTETE_LIGNE;
+			ligne.setLocation(0,hautLigne);
+			this.add(ligne);
+			springLayout.putConstraint(SpringLayout.NORTH, ligne,
+	                hautLigne,
+	                SpringLayout.NORTH, this);
+			System.out.println(ligne.getBounds());
+			basLignePrecedente = ligne.getY() + ligne.getHeight();
 		}
 		
 		
