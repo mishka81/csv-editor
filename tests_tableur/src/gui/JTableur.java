@@ -16,16 +16,16 @@ public class JTableur extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	List<Colonne> listeColonne = new ArrayList<Colonne>();
-	List<Ligne> listeLigne = new ArrayList<Ligne>();
+	List<JColonne> listeColonne = new ArrayList<JColonne>();
+	List<JLigne> listeLigne = new ArrayList<JLigne>();
 	
 
 	public JTableur() {
 		super();
 		
-		Colonne colonne1 = new Colonne(1,1,1, 99);
-		Colonne colonne2 = new Colonne(2,2,100, 100);
-		Colonne colonne3 = new Colonne(3,3,200, 50);
+		JColonne colonne1 = new JColonne(1,1,1, 99);
+		JColonne colonne2 = new JColonne(2,2,100, 100);
+		JColonne colonne3 = new JColonne(3,3,200, 50);
 		listeColonne.add(colonne1);
 		listeColonne.add(colonne2);
 		listeColonne.add(colonne3);
@@ -44,7 +44,7 @@ public class JTableur extends JPanel {
 		g.fillRect(0, 0, this.getSize().width, this.getSize().height);
 		
 		//Dessine les entêtes de colonne
-		for (Colonne colonne : listeColonne) {
+		for (JColonne colonne : listeColonne) {
 			colonne.paint(g);
 		}
 		//super.paint(g);

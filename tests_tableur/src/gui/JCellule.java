@@ -26,8 +26,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import modele.CelluleListener;
 
-public class Cellule extends JPanel {
+
+public class JCellule extends JPanel implements CelluleListener {
 
 	/**
 	 * 
@@ -38,8 +40,8 @@ public class Cellule extends JPanel {
 	private static final int MODE_MODIFICATION = 1; 
 	private int mode = MODE_CONSULTATION;
 	
-	private Colonne colonne;
-	private Ligne ligne;
+	private JColonne colonne;
+	private JLigne ligne;
 	
 	private JTextPane jLabelContenu;
 	private JTextArea jTextContenu;
@@ -58,7 +60,7 @@ public class Cellule extends JPanel {
 		this.getjLabelContenu().requestFocus();
 	}
 
-	public Cellule(JTableur2 tableur, Colonne colonne, Ligne ligne, Zone contenu) {
+	public JCellule(JTableur2 tableur, JColonne colonne, JLigne ligne, Zone contenu) {
 		super();
 		this.setBackground(Color.WHITE);
 		this.setBorder(new EmptyBorder(2, 2, 2, 2));
@@ -89,7 +91,7 @@ public class Cellule extends JPanel {
 				public void mouseClicked(MouseEvent e) {
 					super.mouseClicked(e);
 					if (e.getClickCount() == 1) {
-						Cellule.this.tableur.setCelluleSelectionne(Cellule.this);
+						JCellule.this.tableur.setCelluleSelectionne(JCellule.this);
 					} else if (e.getClickCount() == 2) {
 						setModeEdition();
 					}
@@ -178,11 +180,11 @@ public class Cellule extends JPanel {
 			
 			@Override
 			public void run() {
-				Cellule.this.remove(getjTextContenu());
-				Cellule.this.add(getjLabelContenu());
+				JCellule.this.remove(getjTextContenu());
+				JCellule.this.add(getjLabelContenu());
 				getjLabelContenu().setText(contenu.getValeur());
 				getjLabelContenu().requestFocus();
-				Cellule.this.updateUI();
+				JCellule.this.updateUI();
 			}
 		});
 	}
@@ -194,11 +196,11 @@ public class Cellule extends JPanel {
 			
 			@Override
 			public void run() {
-				Cellule.this.remove(getjLabelContenu());
-				Cellule.this.add(getjTextContenu());
+				JCellule.this.remove(getjLabelContenu());
+				JCellule.this.add(getjTextContenu());
 				getjTextContenu().setText(contenu.getValeur());
 				getjTextContenu().requestFocus();
-				Cellule.this.updateUI();
+				JCellule.this.updateUI();
 			}
 		});
 	}
@@ -214,16 +216,21 @@ public class Cellule extends JPanel {
 		}
 	}
 
-	public Colonne getColonne() {
+	public JColonne getColonne() {
 		return colonne;
 	}
-	public void setColonne(Colonne colonne) {
+	public void setColonne(JColonne colonne) {
 		this.colonne = colonne;
 	}
-	public Ligne getLigne() {
+	public JLigne getLigne() {
 		return ligne;
 	}
-	public void setLigne(Ligne ligne) {
+	public void setLigne(JLigne ligne) {
 		this.ligne = ligne;
+	}
+
+	@Override
+	public void onContenuChanged(String oldValue, String newValue) {
+		this.contenu.setValeur(newValue);
 	}
 }

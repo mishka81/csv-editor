@@ -11,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class Ligne extends JPanel {
+public class JLigne extends JPanel {
 	/**
 	 * 
 	 */
@@ -21,10 +21,10 @@ public class Ligne extends JPanel {
 	
 	private JLabel jLabelNom;
 	
-	private Map<Integer, Cellule> mapCelluleParIndexColonne = new HashMap<Integer, Cellule>();
+	private Map<Integer, JCellule> mapCelluleParIndexColonne = new HashMap<Integer, JCellule>();
 	
 	
-	public Ligne(int numero, int index, int y, int hauteur) {
+	public JLigne(int numero, int index, int y, int hauteur) {
 		super();
 		this.numero = numero;
 		this.index = index;
@@ -39,7 +39,7 @@ public class Ligne extends JPanel {
 		this.add(jLabelNom, BorderLayout.CENTER);
 	}
 	
-	public Cellule getCelluleOnTheRight(Cellule cellule) {
+	public JCellule getCelluleOnTheRight(JCellule cellule) {
 		int indexColonne = cellule.getColonne().getIndex() + 1;
 		if (mapCelluleParIndexColonne.containsKey(indexColonne)) {
 			return mapCelluleParIndexColonne.get(indexColonne);
@@ -47,7 +47,7 @@ public class Ligne extends JPanel {
 		return cellule;
 	}
 	
-	public Cellule getCelluleOnTheLeft(Cellule cellule) {
+	public JCellule getCelluleOnTheLeft(JCellule cellule) {
 		int indexColonne = cellule.getColonne().getIndex() - 1;
 		if (mapCelluleParIndexColonne.containsKey(indexColonne)) {
 			return mapCelluleParIndexColonne.get(indexColonne);
@@ -68,7 +68,7 @@ public class Ligne extends JPanel {
 		this.index = index;
 	}
 	
-	public void addCellule(Cellule cellule) {
+	public void addCellule(JCellule cellule) {
 		mapCelluleParIndexColonne.put(cellule.getColonne().getIndex(), cellule);
 	}
 	
