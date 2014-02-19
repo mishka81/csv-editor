@@ -42,7 +42,7 @@ public class TableurModele {
 		if (numeroLigne>=listeLigne.size()) {
 			return 0;
 		}
-		return listeLigne.get(0).getNumeroColonneMax();
+		return listeLigne.get(numeroLigne).getNumeroColonneMax();
 	}
 
 	public String getValeur (int ligne, int colonne) {
@@ -62,6 +62,30 @@ public class TableurModele {
 	
 	public String[][] getValeurPlage(int ligneDebut, int ligneFin, int colonneDebut, int colonneFin) {
 		return null;
+	}
+
+	public void insererColonne(TableurModele modele, int numero) {
+		//TODO décaler toutes les cellules, mettre à jour les maps des lignes et colonnes
+		Colonne colonne = new Colonne(numero);
+		
+		//décale les colonnes suivates
+		int numeroColonneADecaler=numero;
+		while (numeroColonneADecaler < listeColonne.size()) {
+			Colonne colonneADecaler = listeColonne.get(numeroColonneADecaler);
+			colonneADecaler.setNumero(numeroColonneADecaler+1);
+			
+		}
+		
+		//crée les cellules vides et les insère sur les lignes
+		for (int i = 0; i < listeLigne.size();i++) {
+			Ligne ligne = listeLigne.get(i);
+			new Cellule(modele, colonne, ligne, "");
+			
+			
+		}
+		
+		
+		listeColonne.add(numero, colonne);
 	}
 	
 }

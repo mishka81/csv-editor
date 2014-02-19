@@ -84,11 +84,7 @@ public class JTableur2 extends JPanel{
 		SpringLayout springLayout = new SpringLayout();
 		this.setLayout(springLayout);
 		
-		int numeroColonne = 0;
 		int numeroLigne = 0;
-		
-		
-		
 		
 		boolean firstCellule=false;
 		while (numeroLigne < modele.getNbLignes()) {
@@ -104,7 +100,7 @@ public class JTableur2 extends JPanel{
 			}
 			JLigne ligne = listeLigne.get(numeroLigne);
 			int nombreColonneSurLigne = modele.getNbColonnesSurLigne(numeroLigne);
-			
+			int numeroColonne = 0;
 			while (numeroColonne < nombreColonneSurLigne) {
 				String valeur = modele.getValeur(numeroLigne, numeroColonne);
 				if (valeur != null) {
@@ -117,7 +113,7 @@ public class JTableur2 extends JPanel{
 							x = jColonnePrecedente.getX() + LARGEUR_POIGNEE_ENTETE_COLONNE + jColonnePrecedente.getWidth(); 
 						}
 						
-						listeColonne.add(new JColonne(numeroColonne, numeroColonne, x, 100));
+						listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100));
 					}
 					JColonne colonne = listeColonne.get(numeroColonne);
 					
@@ -171,16 +167,7 @@ System.out.println(ligne.getY());
 			System.out.println(ligne.getBounds());
 			basLignePrecedente = ligne.getY() + ligne.getHeight();
 		}
-		
-		
-		//Création des colonnes
-//		JColonne colonne1 = new JColonne(1,1,1,99);
-//		JColonne colonne2 = new JColonne(2,2,100,99);
-//		JColonne colonne3 = new JColonne(3,3,200,70);
-//		listeColonne.add(colonne1);
-//		listeColonne.add(colonne2);
-//		listeColonne.add(colonne3);
-		
+
 		//Ajout des listener globaux
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "selectionnerCelluleSurLaDroite");
 		this.getActionMap().put("selectionnerCelluleSurLaDroite", new AbstractAction() {
@@ -213,60 +200,5 @@ System.out.println(ligne.getY());
 				JTableur2.this.selectCelluleOnBottom(celluleSelectionnee);
 			}
 		});
-		
-		//TODO restaurer
-//		int droiteColonnePrecedente = LARGEUR_NUMERO_LIGNE;
-//		for (JColonne colonne : listeColonne) {
-//			int gaucheColonne = droiteColonnePrecedente + LARGEUR_POIGNEE_ENTETE_COLONNE;
-//			colonne.setLocation(gaucheColonne, 0);
-//			this.add(colonne);
-//			springLayout.putConstraint(SpringLayout.WEST, colonne,
-//					gaucheColonne,
-//	                SpringLayout.WEST, this);
-//			System.out.println(colonne.getBounds());
-//			droiteColonnePrecedente = colonne.getX() + colonne.getWidth();
-//		}
-		
-		//Création des lignes
-//		JLigne ligne1 = new JLigne(1,1,1,29);
-//		JLigne ligne2 = new JLigne(2,2,30,49);
-//		JLigne ligne3 = new JLigne(3,3,80,29);
-//		listeLigne.add(ligne1);
-//		listeLigne.add(ligne2);
-//		listeLigne.add(ligne3);
-		
-//		int basLignePrecedente = HAUTEUR_ENTETE_COLONNE;
-//		for (JLigne ligne : listeLigne) {
-//			int hautLigne = basLignePrecedente + HAUTEUR_POIGNEE_ENTETE_LIGNE;
-//			ligne.setLocation(0,hautLigne);
-//			this.add(ligne);
-//			springLayout.putConstraint(SpringLayout.NORTH, ligne,
-//	                hautLigne,
-//	                SpringLayout.NORTH, this);
-//			System.out.println(ligne.getBounds());
-//			basLignePrecedente = ligne.getY() + ligne.getHeight();
-//		}
-		
-		//Création des cellules
-//		boolean firstCellule = true;
-//		for (JColonne colonne : listeColonne) {
-//			for (JLigne ligne : listeLigne) {
-//				JCellule cellule = new JCellule(this, colonne, ligne, new Zone("test"));
-//				cellule.setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());
-//				this.add(cellule);
-//				ligne.addCellule(cellule);
-//				colonne.addCellule(cellule);
-//				springLayout.putConstraint(SpringLayout.NORTH, cellule,
-//		                ligne.getY(),
-//		                SpringLayout.NORTH, this);
-//				springLayout.putConstraint(SpringLayout.WEST, cellule,
-//		                colonne.getX(),
-//		                SpringLayout.WEST, this);
-//				if (firstCellule) {
-//					setCelluleSelectionne(cellule);
-//					firstCellule = false;
-//				}
-//			}
-//		}
 	}
 }

@@ -1,5 +1,6 @@
 package gui;
 
+import gui.action.InsererColonneAction;
 import gui2.JTableur2;
 
 import java.awt.BorderLayout;
@@ -10,8 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+
+import modele.TableurModele;
 
 public class JColonne extends JPanel{
 	/**
@@ -26,9 +31,12 @@ public class JColonne extends JPanel{
 
 	private Map<Integer, JCellule> mapCelluleParIndexLigne = new HashMap<Integer, JCellule>();
 	
+	private JMenuItem insererColonne = new JMenuItem("Insérer une colonne");
+    private JPopupMenu menuPopup = new JPopupMenu();
 	
 	
-	public JColonne(int numero, int index, int x, int largeur) {
+	
+	public JColonne(TableurModele modele, int numero, int index, int x, int largeur) {
 		super();
 		this.setLayout(new BorderLayout());
 		this.setBackground(new Color(223,227,232));
@@ -43,6 +51,11 @@ public class JColonne extends JPanel{
 		jLabelNom = new JLabel(String.valueOf(numero));
 		jLabelNom = new JLabel(String.valueOf(numero), SwingConstants.CENTER);
 		this.add(jLabelNom, BorderLayout.CENTER);
+		
+		//popup menu
+		insererColonne.setAction(new InsererColonneAction(modele, numero));
+        menuPopup.add(insererColonne);
+        this.setComponentPopupMenu(menuPopup);
 	}
 	
 	public JCellule getCelluleOnTheBottom(JCellule cellule) {

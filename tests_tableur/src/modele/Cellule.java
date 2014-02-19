@@ -13,6 +13,7 @@ public class Cellule {
 	
 	List<CelluleListener> listCelluleListener = new ArrayList<CelluleListener>();
 	
+	
 	public Cellule(TableurModele modele, Colonne colonne, Ligne ligne, String contenu) {
 		super();
 		this.colonne = colonne;
