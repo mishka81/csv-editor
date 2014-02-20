@@ -8,7 +8,6 @@ public class TestTableur {
 		new FenetrePrincipale().setVisible(true);
 //		InputStream inputStream = TestTableur.class.getResourceAsStream("file.csv");
 //		CSVLoader.INSTANCE.loadCSV(inputStream);
-//		new FenetrePrincipale().setVisible(true);
 	}
 
 }
