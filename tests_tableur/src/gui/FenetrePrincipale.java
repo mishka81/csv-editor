@@ -16,6 +16,36 @@ public class FenetrePrincipale extends JFrame{
 		super();
 		
 		TableurModele modele = new TableurModele();
+		creerModeleLeger(modele);
+		//creerModeleLourd(modele);
+		
+		
+		
+		
+		this.setPreferredSize(new Dimension(1024,480));
+		this.getContentPane().add(new JTableur2(modele));
+		
+		
+		this.pack();
+		this.setLocationRelativeTo(null);
+//		this.getRootPane().updateUI();
+//		this.getRootPane().update(this.getRootPane().getGraphics());
+		
+		
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		
+		
+	}
+	
+	private void creerModeleLourd(TableurModele modele) {
+		for (int i = 0;i < 1000;i++) {
+			for (int j = 0;j < 10;j++) {
+				modele.setValeur(i, j, i + "." +j);
+			}
+		}
+	}
+
+	private void creerModeleLeger(TableurModele modele) {
 		modele.setValeur(0, 0, "0.0");
 		modele.setValeur(0, 1, "0.1");
 		modele.setValeur(0, 2, "0.2");
@@ -37,21 +67,6 @@ public class FenetrePrincipale extends JFrame{
 		modele.setValeur(4, 2, "4.2");
 		modele.setValeur(4, 3, "4.3");
 		modele.setValeur(4, 4, "4.4");
-		
-		
-		this.setPreferredSize(new Dimension(640,480));
-		this.getContentPane().add(new JTableur2(modele));
-		
-		
-		this.pack();
-		this.setLocationRelativeTo(null);
-//		this.getRootPane().updateUI();
-//		this.getRootPane().update(this.getRootPane().getGraphics());
-		
-		
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
-		
 	}
 
 	

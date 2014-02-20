@@ -1,5 +1,6 @@
 package modele;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,27 @@ public class Ligne {
 	public int getNumeroColonneMax() {
 		return numeroColonneMax;
 	}
+
+	public void insertNewCellule(TableurModele modele, Colonne colonne) {
+		//décale toutes les cellules suivantes vers la droite
+		int numeroColonne = colonne.getNumero();
+		boolean creerCellule = false;
+		for (int i = numeroColonneMax;i >= numeroColonne;i--) {
+			mapCelluleParNumeroColonne.put(i+1, mapCelluleParNumeroColonne.get(i));
+			creerCellule = true;
+		}
+		
+		//La cellule ne doit être créée que dans le cas où la colonne n'a pas été insérée
+		//après la dernière colonne de la ligne
+		if (creerCellule) {
+			new Cellule(modele, colonne, this, "");
+			numeroColonneMax++;
+		}
+		
+	}
 	
-	
+	public Collection<Cellule> getCollectionCellule() {
+		return mapCelluleParNumeroColonne.values();
+	}
 	
 }

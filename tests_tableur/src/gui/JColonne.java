@@ -31,7 +31,7 @@ public class JColonne extends JPanel{
 
 	private Map<Integer, JCellule> mapCelluleParIndexLigne = new HashMap<Integer, JCellule>();
 	
-	private JMenuItem insererColonne = new JMenuItem("Insérer une colonne");
+	private JMenuItem insererColonne = new JMenuItem();
     private JPopupMenu menuPopup = new JPopupMenu();
 	
 	
@@ -54,6 +54,7 @@ public class JColonne extends JPanel{
 		
 		//popup menu
 		insererColonne.setAction(new InsererColonneAction(modele, numero));
+		insererColonne.setText("Insérer une colonne");
         menuPopup.add(insererColonne);
         this.setComponentPopupMenu(menuPopup);
 	}

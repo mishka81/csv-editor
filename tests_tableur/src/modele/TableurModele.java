@@ -9,6 +9,7 @@ public class TableurModele {
 	
 	int nbColonnes = 0;
 	int nbLignes = 0;
+	private List<TableurModeleStructureListener> listeTableurModeleStructureListener = new ArrayList<TableurModeleStructureListener>();
 	
 	public void setValeur (int ligne, int colonne, String valeur) {
 		while (ligne >= listeLigne.size()) {
@@ -46,6 +47,10 @@ public class TableurModele {
 	}
 
 	public String getValeur (int ligne, int colonne) {
+		return getCellule(ligne, colonne).getContenu();
+	}
+	
+	public Cellule getCellule (int ligne, int colonne) {
 		if (ligne >= listeLigne.size()) {
 			return null;
 		}
@@ -57,15 +62,22 @@ public class TableurModele {
 			//Possible dans le cas où une ligne a moins de champs que les autres
 			return null;
 		}
-		return cellule.getContenu();
+		return cellule;
 	}
 	
 	public String[][] getValeurPlage(int ligneDebut, int ligneFin, int colonneDebut, int colonneFin) {
 		return null;
 	}
+	
+	public List<Cellule> getAllCellule() {
+		List<Cellule> allCellule = new ArrayList<Cellule>();
+		for (Ligne ligne : listeLigne) {
+			allCellule.addAll(ligne.getCollectionCellule());
+		}
+		return allCellule;
+	}
 
 	public void insererColonne(TableurModele modele, int numero) {
-		//TODO décaler toutes les cellules, mettre à jour les maps des lignes et colonnes
 		Colonne colonne = new Colonne(numero);
 		
 		//décale les colonnes suivates
@@ -73,19 +85,22 @@ public class TableurModele {
 		while (numeroColonneADecaler < listeColonne.size()) {
 			Colonne colonneADecaler = listeColonne.get(numeroColonneADecaler);
 			colonneADecaler.setNumero(numeroColonneADecaler+1);
-			
+			colonneADecaler.setNom(String.valueOf(colonneADecaler.getNumero()));
+			numeroColonneADecaler++;
 		}
-		
-		//crée les cellules vides et les insère sur les lignes
-		for (int i = 0; i < listeLigne.size();i++) {
-			Ligne ligne = listeLigne.get(i);
-			new Cellule(modele, colonne, ligne, "");
-			
-			
+		//décale la cellule sur toutes les lignes et insère la nouvelle cellule
+		for (Ligne ligne : listeLigne) {
+			ligne.insertNewCellule(modele, colonne);
 		}
-		
-		
+		for (TableurModeleStructureListener listener : listeTableurModeleStructureListener) {
+			listener.onColonneInsered(colonne);
+		}
 		listeColonne.add(numero, colonne);
+	}
+	
+	
+	public void addModeleStructureListener(TableurModeleStructureListener tableurModeleStructureListener) {
+		this.listeTableurModeleStructureListener .add(tableurModeleStructureListener);
 	}
 	
 }

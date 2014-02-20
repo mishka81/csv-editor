@@ -26,6 +26,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
+import modele.Cellule;
 import modele.CelluleListener;
 
 
@@ -47,6 +48,8 @@ public class JCellule extends JPanel implements CelluleListener {
 	private JTextArea jTextContenu;
 	private Zone contenu;
 	
+	Cellule celluleCorrespondante;
+	
 	JTableur2 tableur;
 	
 	private boolean selectionnee;
@@ -60,7 +63,7 @@ public class JCellule extends JPanel implements CelluleListener {
 		this.getjLabelContenu().requestFocus();
 	}
 
-	public JCellule(JTableur2 tableur, JColonne colonne, JLigne ligne, Zone contenu) {
+	public JCellule(JTableur2 tableur, JColonne colonne, JLigne ligne, Zone contenu, Cellule cellule) {
 		super();
 		this.setBackground(Color.WHITE);
 		this.setBorder(new EmptyBorder(2, 2, 2, 2));

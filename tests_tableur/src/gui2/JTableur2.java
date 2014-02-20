@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import gui.JCellule;
@@ -17,11 +18,14 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
+import javax.swing.event.TableModelListener;
 
+import modele.Cellule;
 import modele.Colonne;
 import modele.TableurModele;
+import modele.TableurModeleStructureListener;
 
-public class JTableur2 extends JPanel{
+public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	
 	public static final int HAUTEUR_ENTETE_COLONNE=30;
 	public static final int LARGEUR_POIGNEE_ENTETE_COLONNE=1;
@@ -36,6 +40,9 @@ public class JTableur2 extends JPanel{
 	List<JColonne> listeColonne = new ArrayList<JColonne>();
 	List<JLigne> listeLigne = new ArrayList<JLigne>();
 	JCellule celluleSelectionnee;
+	
+	TableurModele modele;
+	SpringLayout springLayout = new SpringLayout();
 	
 	public void setCelluleSelectionne(final JCellule cellule) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -78,11 +85,66 @@ public class JTableur2 extends JPanel{
 	
 	public JTableur2(TableurModele modele) {
 		super();
+		this.modele = modele;
 		
 		//Initialisation du tableur
 		this.setBackground(new Color(177,181,186));
-		SpringLayout springLayout = new SpringLayout();
+		
 		this.setLayout(springLayout);
+		modele.addModeleStructureListener(this);
+		
+		creerComposant();
+
+		//Ajout des listener globaux
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "selectionnerCelluleSurLaDroite");
+		this.getActionMap().put("selectionnerCelluleSurLaDroite", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JTableur2.this.selectCelluleOnRight(celluleSelectionnee);
+			}
+		});
+		
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "selectionnerCelluleSurLaGauche");
+		this.getActionMap().put("selectionnerCelluleSurLaGauche", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JTableur2.this.selectCelluleOnLeft(celluleSelectionnee);
+			}
+		});
+
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "selectionnerCelluleSurLeHaut");
+		this.getActionMap().put("selectionnerCelluleSurLeHaut", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JTableur2.this.selectCelluleOnTop(celluleSelectionnee);
+			}
+		});
+		
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "selectionnerCelluleSurLeBas");
+		this.getActionMap().put("selectionnerCelluleSurLeBas", new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JTableur2.this.selectCelluleOnBottom(celluleSelectionnee);
+			}
+		});
+	}
+
+	private void creerComposant() {
+		//supprime le composant tel qu'il existe
+		for (JLigne jLigne : listeLigne) {
+			this.remove(jLigne);
+			Collection<JCellule> collectionCellule = jLigne.getCollectionCellule();
+			for (JCellule jCellule : collectionCellule) {
+				this.remove(jCellule);
+			}
+		}
+		
+		for (JColonne jColonne : listeColonne) {
+			this.remove(jColonne);
+		}
+		listeLigne.clear();
+		listeColonne.clear();
+		
 		
 		int numeroLigne = 0;
 		
@@ -101,9 +163,9 @@ public class JTableur2 extends JPanel{
 			JLigne ligne = listeLigne.get(numeroLigne);
 			int nombreColonneSurLigne = modele.getNbColonnesSurLigne(numeroLigne);
 			int numeroColonne = 0;
-			while (numeroColonne < nombreColonneSurLigne) {
-				String valeur = modele.getValeur(numeroLigne, numeroColonne);
-				if (valeur != null) {
+			while (numeroColonne <= nombreColonneSurLigne) {
+				Cellule cellule = modele.getCellule(numeroLigne, numeroColonne);
+				if (cellule != null) {
 					//Il y a une donnée saisie à ces coordonnées
 					//Récupération de la colonne
 					while (numeroColonne == listeColonne.size()) {
@@ -118,20 +180,20 @@ public class JTableur2 extends JPanel{
 					JColonne colonne = listeColonne.get(numeroColonne);
 					
 					//Création de la cellule
-					JCellule cellule = new JCellule(this, colonne, ligne, new Zone(valeur));
-					cellule.setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());
-					this.add(cellule);
-					ligne.addCellule(cellule);
-					colonne.addCellule(cellule);
-System.out.println(ligne.getY());
-					springLayout.putConstraint(SpringLayout.NORTH, cellule,
+					JCellule jCellule = new JCellule(this, colonne, ligne, new Zone(cellule.getContenu()), cellule);
+					jCellule.setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());
+					this.add(jCellule);
+					ligne.addCellule(jCellule);
+					colonne.addCellule(jCellule);
+
+					springLayout.putConstraint(SpringLayout.NORTH, jCellule,
 			                ligne.getY(),
 			                SpringLayout.NORTH, this);
-					springLayout.putConstraint(SpringLayout.WEST, cellule,
+					springLayout.putConstraint(SpringLayout.WEST, jCellule,
 			                colonne.getX(),
 			                SpringLayout.WEST, this);
 					if (firstCellule) {
-						setCelluleSelectionne(cellule);
+						setCelluleSelectionne(jCellule);
 						firstCellule = false;
 					}
 				} else {
@@ -167,38 +229,11 @@ System.out.println(ligne.getY());
 			System.out.println(ligne.getBounds());
 			basLignePrecedente = ligne.getY() + ligne.getHeight();
 		}
+	}
 
-		//Ajout des listener globaux
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "selectionnerCelluleSurLaDroite");
-		this.getActionMap().put("selectionnerCelluleSurLaDroite", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnRight(celluleSelectionnee);
-			}
-		});
+	@Override
+	public void onColonneInsered(Colonne colonne) {
+		creerComposant();
 		
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "selectionnerCelluleSurLaGauche");
-		this.getActionMap().put("selectionnerCelluleSurLaGauche", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnLeft(celluleSelectionnee);
-			}
-		});
-
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "selectionnerCelluleSurLeHaut");
-		this.getActionMap().put("selectionnerCelluleSurLeHaut", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnTop(celluleSelectionnee);
-			}
-		});
-		
-		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "selectionnerCelluleSurLeBas");
-		this.getActionMap().put("selectionnerCelluleSurLeBas", new AbstractAction() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnBottom(celluleSelectionnee);
-			}
-		});
 	}
 }

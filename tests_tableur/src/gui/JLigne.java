@@ -4,12 +4,16 @@ import gui2.JTableur2;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import modele.Cellule;
 
 public class JLigne extends JPanel {
 	/**
@@ -70,6 +74,10 @@ public class JLigne extends JPanel {
 	
 	public void addCellule(JCellule cellule) {
 		mapCelluleParIndexColonne.put(cellule.getColonne().getIndex(), cellule);
+	}
+	
+	public Collection<JCellule> getCollectionCellule() {
+		return mapCelluleParIndexColonne.values();
 	}
 	
 }
