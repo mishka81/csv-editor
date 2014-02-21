@@ -4,43 +4,36 @@ import gui2.JTableur2;
 
 import java.awt.Dimension;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
 import modele.TableurModele;
 
-public class FenetrePrincipale extends JFrame{
+public class FenetrePrincipale extends JFrame {
 
 	public FenetrePrincipale() {
 		super();
-		
+
 		TableurModele modele = new TableurModele();
-		creerModeleLeger(modele);
-		//creerModeleLourd(modele);
-		
-		
-		
-		
-		this.setPreferredSize(new Dimension(1024,480));
+		this.creerModeleLeger(modele);
+		//this.creerModeleLourd(modele);
+
+		this.setPreferredSize(new Dimension(1024, 480));
 		this.getContentPane().add(new JTableur2(modele));
-		
-		
+
 		this.pack();
 		this.setLocationRelativeTo(null);
-//		this.getRootPane().updateUI();
-//		this.getRootPane().update(this.getRootPane().getGraphics());
-		
-		
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
-		
+		//		this.getRootPane().updateUI();
+		//		this.getRootPane().update(this.getRootPane().getGraphics());
+
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
 	}
-	
+
 	private void creerModeleLourd(TableurModele modele) {
-		for (int i = 0;i < 1000;i++) {
-			for (int j = 0;j < 10;j++) {
-				modele.setValeur(i, j, i + "." +j);
+		for (int i = 0; i < 1000; i++) {
+			for (int j = 0; j < 100; j++) {
+				modele.setValeur(i, j, i + "." + j);
 			}
 		}
 	}
@@ -69,6 +62,4 @@ public class FenetrePrincipale extends JFrame{
 		modele.setValeur(4, 4, "4.4");
 	}
 
-	
-	
 }
