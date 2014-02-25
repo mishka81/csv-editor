@@ -32,13 +32,13 @@ import modele.Colonne;
 import modele.TableurModele;
 import modele.TableurModeleStructureListener;
 
-public class JTableur2 extends JPanel implements TableurModeleStructureListener{
-	
-	public static final int HAUTEUR_ENTETE_COLONNE=30;
-	public static final int LARGEUR_POIGNEE_ENTETE_COLONNE=1;
-	public static final int LARGEUR_NUMERO_LIGNE=40;
-	public static final int HAUTEUR_POIGNEE_ENTETE_LIGNE=1;
-	
+public class JTableur2 extends JPanel implements TableurModeleStructureListener {
+
+	public static final int HAUTEUR_ENTETE_COLONNE = 30;
+	public static final int LARGEUR_POIGNEE_ENTETE_COLONNE = 1;
+	public static final int LARGEUR_NUMERO_LIGNE = 40;
+	public static final int HAUTEUR_POIGNEE_ENTETE_LIGNE = 1;
+
 	/**
 	 * 
 	 */
@@ -56,21 +56,31 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	private JFrame fenetrePrincipale;
 	int nombreCellulesCrees;
 	
+	/**
+	 * numero de la colonne collée au bord gauche
+	 */
+	int numeroCelluleGauche = 0;
+
+	/**
+	 * Numéro de la colonne collée au haut de l'écran
+	 */
+	int numeroCelluleHaut = 0;
+	
 	
 	public void setCelluleSelectionne(final JCellule cellule) {
 		SwingUtilities.invokeLater(new Runnable() {
 			
 			@Override
 			public void run() {
-				if (celluleSelectionnee != null) {
-					celluleSelectionnee.setSelectionnee(false);
-					celluleSelectionnee.validerSaise();
-					celluleSelectionnee.repaint();
+				if (JTableur2.this.celluleSelectionnee != null) {
+					JTableur2.this.celluleSelectionnee.setSelectionnee(false);
+					JTableur2.this.celluleSelectionnee.validerSaise();
+					JTableur2.this.celluleSelectionnee.repaint();
 				}
 				JTableur2.this.celluleSelectionnee = cellule;
-				if (celluleSelectionnee != null) {
-					celluleSelectionnee.setSelectionnee(true);
-					celluleSelectionnee.repaint();
+				if (JTableur2.this.celluleSelectionnee != null) {
+					JTableur2.this.celluleSelectionnee.setSelectionnee(true);
+					JTableur2.this.celluleSelectionnee.repaint();
 				}
 			}
 		});
@@ -78,24 +88,23 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	
 	public void selectCelluleOnRight(JCellule cellule) {
 		JLigne ligne = cellule.getLigne();
-		setCelluleSelectionne(ligne.getCelluleOnTheRight(cellule));
+		this.setCelluleSelectionne(ligne.getCelluleOnTheRight(cellule));
 	}
 	
 	public void selectCelluleOnLeft(JCellule cellule) {
 		JLigne ligne = cellule.getLigne();
-		setCelluleSelectionne(ligne.getCelluleOnTheLeft(cellule));
+		this.setCelluleSelectionne(ligne.getCelluleOnTheLeft(cellule));
 	}
 	public void selectCelluleOnTop(JCellule cellule) {
 		JColonne colonne = cellule.getColonne();
-		setCelluleSelectionne(colonne.getCelluleOnTheTop(cellule));
+		this.setCelluleSelectionne(colonne.getCelluleOnTheTop(cellule));
 	}
 	
 	public void selectCelluleOnBottom(JCellule cellule) {
 		JColonne colonne = cellule.getColonne();
-		setCelluleSelectionne(colonne.getCelluleOnTheBottom(cellule));
+		this.setCelluleSelectionne(colonne.getCelluleOnTheBottom(cellule));
 	}
-	
-	
+
 	public JTableur2(TableurModele modele, JFrame fenetrePrincipale) {
 		super();
 		this.modele = modele;
@@ -139,15 +148,15 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 		this.getActionMap().put("selectionnerCelluleSurLaDroite", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnRight(celluleSelectionnee);
+				JTableur2.this.selectCelluleOnRight(JTableur2.this.celluleSelectionnee);
 			}
 		});
-		
+
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "selectionnerCelluleSurLaGauche");
 		this.getActionMap().put("selectionnerCelluleSurLaGauche", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnLeft(celluleSelectionnee);
+				JTableur2.this.selectCelluleOnLeft(JTableur2.this.celluleSelectionnee);
 			}
 		});
 
@@ -155,15 +164,15 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 		this.getActionMap().put("selectionnerCelluleSurLeHaut", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnTop(celluleSelectionnee);
+				JTableur2.this.selectCelluleOnTop(JTableur2.this.celluleSelectionnee);
 			}
 		});
-		
+
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "selectionnerCelluleSurLeBas");
 		this.getActionMap().put("selectionnerCelluleSurLeBas", new AbstractAction() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JTableur2.this.selectCelluleOnBottom(celluleSelectionnee);
+				JTableur2.this.selectCelluleOnBottom(JTableur2.this.celluleSelectionnee);
 			}
 		});
 	}
@@ -171,40 +180,40 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	private void creerComposant() {
 		//supprime le composant tel qu'il existe
 		//TODO supprimer les listeners des JCellule vers les cellules
-		for (JLigne jLigne : listeLigne) {
+		for (JLigne jLigne : this.listeLigne) {
 			this.remove(jLigne);
 			Collection<JCellule> collectionCellule = jLigne.getCollectionCellule();
 			for (JCellule jCellule : collectionCellule) {
 				this.remove(jCellule);
 			}
 		}
-		
-		for (JColonne jColonne : listeColonne) {
+
+		for (JColonne jColonne : this.listeColonne) {
 			this.remove(jColonne);
 		}
 		listeLigne.clear();
 		listeColonne.clear();
 		
 		
-		int numeroLigne = 0;
+		int numeroLigne = this.numeroCelluleHaut;
 		
-		boolean firstCellule=false;
+		boolean firstCellule=true;
 		boolean ligneDepasseBasGrille = false;
 		
 		while (numeroLigne < modele.getNbLignes()  && !ligneDepasseBasGrille) {
 			//Récupération de la ligne
-			if (numeroLigne == listeLigne.size()) {
+			if (numeroLigne - this.numeroCelluleHaut == this.listeLigne.size()) {
 				int y = HAUTEUR_ENTETE_COLONNE + HAUTEUR_POIGNEE_ENTETE_LIGNE;
-				if (numeroLigne != 0) {
-					JLigne jLignePrecedente = listeLigne.get(numeroLigne - 1);
+				if (numeroLigne - this.numeroCelluleHaut != 0) {
+					JLigne jLignePrecedente = listeLigne.get(numeroLigne - this.numeroCelluleHaut - 1);
 					y = jLignePrecedente.getY() + HAUTEUR_POIGNEE_ENTETE_LIGNE + jLignePrecedente.getHeight(); 
 				}
 				
 				listeLigne.add(new JLigne(numeroLigne, numeroLigne, y, 30));
 			}
-			JLigne ligne = listeLigne.get(numeroLigne);
+			JLigne ligne = listeLigne.get(numeroLigne - this.numeroCelluleHaut);
 			int nombreColonneSurLigne = modele.getNbColonnesSurLigne(numeroLigne);
-			int numeroColonne = 0;
+			int numeroColonne = this.numeroCelluleGauche;
 
 			//TODO trouver mieux que la dimension de la fenêtre
 			if (ligne.getY() + ligne.getHeight() > fenetrePrincipale.getPreferredSize().getHeight()) {
@@ -216,17 +225,17 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 				if (cellule != null) {
 					//Il y a une donnée saisie à ces coordonnées
 					//Récupération de la colonne
-					while (numeroColonne == listeColonne.size()) {
+					while (numeroColonne - this.numeroCelluleGauche  == listeColonne.size()) {
 						int x = LARGEUR_NUMERO_LIGNE + LARGEUR_POIGNEE_ENTETE_COLONNE;
-						if (numeroColonne != 0) {
-							JColonne jColonnePrecedente = listeColonne.get(numeroColonne - 1);
+						if (numeroColonne - this.numeroCelluleGauche != 0) {
+							JColonne jColonnePrecedente = listeColonne.get(numeroColonne - this.numeroCelluleGauche - 1);
 							x = jColonnePrecedente.getX() + LARGEUR_POIGNEE_ENTETE_COLONNE + jColonnePrecedente.getWidth(); 
 						}
 						
 						listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100));
 					}
-					JColonne colonne = listeColonne.get(numeroColonne);
-					
+					JColonne colonne = this.listeColonne.get(numeroColonne - this.numeroCelluleGauche);
+
 					//Création de la cellule
 					JCellule jCellule = new JCellule(this, colonne, ligne, new Zone(cellule.getContenu()), cellule);
 					jCellule.setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());

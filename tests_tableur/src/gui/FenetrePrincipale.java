@@ -8,7 +8,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import modele.TableurModele;
+import modele.TableurModele; 
 
 public class FenetrePrincipale extends JFrame{
 
