@@ -16,14 +16,15 @@ public class FenetrePrincipale extends JFrame{
 		super();
 		
 		TableurModele modele = new TableurModele();
-		creerModeleLeger(modele);
-		//creerModeleLourd(modele);
+		//creerModeleLeger(modele);
+		creerModeleLourd(modele);
 		
 		
 		
 		
 		this.setPreferredSize(new Dimension(1024,480));
-		this.getContentPane().add(new JTableur2(modele));
+		
+		this.getContentPane().add(new JTableur2(modele, this));
 		
 		
 		this.pack();
@@ -38,8 +39,8 @@ public class FenetrePrincipale extends JFrame{
 	}
 	
 	private void creerModeleLourd(TableurModele modele) {
-		for (int i = 0;i < 1000;i++) {
-			for (int j = 0;j < 10;j++) {
+		for (int i = 0;i < 20;i++) {
+			for (int j = 0;j < 20;j++) {
 				modele.setValeur(i, j, i + "." +j);
 			}
 		}

@@ -1,5 +1,6 @@
 package gui2;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -7,17 +8,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import gui.FenetrePrincipale;
 import gui.JCellule;
 import gui.JColonne;
 import gui.JLigne;
 import gui.Zone;
 
 import javax.swing.AbstractAction;
+import javax.swing.BoundedRangeModel;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelListener;
 
 import modele.Cellule;
@@ -43,6 +50,12 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	
 	TableurModele modele;
 	SpringLayout springLayout = new SpringLayout();
+	JScrollBar scrollbarHorizontal = new JScrollBar(JScrollBar.HORIZONTAL);
+	JScrollBar scrollbarVertical = new JScrollBar(JScrollBar.VERTICAL);
+	JPanel panelGrille = new JPanel();
+	private JFrame fenetrePrincipale;
+	int nombreCellulesCrees;
+	
 	
 	public void setCelluleSelectionne(final JCellule cellule) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -83,18 +96,44 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 	}
 	
 	
-	public JTableur2(TableurModele modele) {
+	public JTableur2(TableurModele modele, JFrame fenetrePrincipale) {
 		super();
 		this.modele = modele;
+		this.fenetrePrincipale = fenetrePrincipale;
 		
 		//Initialisation du tableur
 		this.setBackground(new Color(177,181,186));
 		
-		this.setLayout(springLayout);
+		this.setLayout(new BorderLayout());
+		panelGrille.setLayout(springLayout);
+		this.add(panelGrille);
+		
+		
+		this.add(scrollbarHorizontal,BorderLayout.SOUTH);
+		this.scrollbarHorizontal.getModel().addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Object source = e.getSource();
+			    if (source instanceof BoundedRangeModel) {
+			      BoundedRangeModel aModel = (BoundedRangeModel) source;
+			      if (!aModel.getValueIsAdjusting()) {
+			    	System.out.println(scrollbarHorizontal.getValue());  
+			        System.out.println("Changed: " + aModel.getValue());
+			      }
+			    } else {
+			      System.out.println("Something changed: " + source);
+			    }
+				
+			}
+		});
+		
+		this.add(scrollbarVertical,BorderLayout.EAST);
+		
 		modele.addModeleStructureListener(this);
 		
 		creerComposant();
-
+		
 		//Ajout des listener globaux
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "selectionnerCelluleSurLaDroite");
 		this.getActionMap().put("selectionnerCelluleSurLaDroite", new AbstractAction() {
@@ -131,6 +170,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 
 	private void creerComposant() {
 		//supprime le composant tel qu'il existe
+		//TODO supprimer les listeners des JCellule vers les cellules
 		for (JLigne jLigne : listeLigne) {
 			this.remove(jLigne);
 			Collection<JCellule> collectionCellule = jLigne.getCollectionCellule();
@@ -149,7 +189,9 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 		int numeroLigne = 0;
 		
 		boolean firstCellule=false;
-		while (numeroLigne < modele.getNbLignes()) {
+		boolean ligneDepasseBasGrille = false;
+		
+		while (numeroLigne < modele.getNbLignes()  && !ligneDepasseBasGrille) {
 			//Récupération de la ligne
 			if (numeroLigne == listeLigne.size()) {
 				int y = HAUTEUR_ENTETE_COLONNE + HAUTEUR_POIGNEE_ENTETE_LIGNE;
@@ -163,7 +205,13 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 			JLigne ligne = listeLigne.get(numeroLigne);
 			int nombreColonneSurLigne = modele.getNbColonnesSurLigne(numeroLigne);
 			int numeroColonne = 0;
-			while (numeroColonne <= nombreColonneSurLigne) {
+
+			//TODO trouver mieux que la dimension de la fenêtre
+			if (ligne.getY() + ligne.getHeight() > fenetrePrincipale.getPreferredSize().getHeight()) {
+				ligneDepasseBasGrille = true;
+			}
+			boolean colonneDepasseDroiteGrille = false;
+			while (numeroColonne <= nombreColonneSurLigne && !colonneDepasseDroiteGrille) {
 				Cellule cellule = modele.getCellule(numeroLigne, numeroColonne);
 				if (cellule != null) {
 					//Il y a une donnée saisie à ces coordonnées
@@ -182,7 +230,8 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 					//Création de la cellule
 					JCellule jCellule = new JCellule(this, colonne, ligne, new Zone(cellule.getContenu()), cellule);
 					jCellule.setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());
-					this.add(jCellule);
+					this.panelGrille.add(jCellule);
+					nombreCellulesCrees++;
 					ligne.addCellule(jCellule);
 					colonne.addCellule(jCellule);
 
@@ -196,9 +245,13 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 						setCelluleSelectionne(jCellule);
 						firstCellule = false;
 					}
+					if (colonne.getX() + colonne.getWidth() > fenetrePrincipale.getPreferredSize().getWidth()) {
+						colonneDepasseDroiteGrille = true;
+					}
 				} else {
 					//TODO gérer le cas des cellules inexistantes
 				}
+				
 				numeroColonne++;
 			}
 			numeroLigne++;
@@ -209,11 +262,11 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 		for (JColonne colonne : listeColonne) {
 			int gaucheColonne = droiteColonnePrecedente + LARGEUR_POIGNEE_ENTETE_COLONNE;
 			colonne.setLocation(gaucheColonne, 0);
-			this.add(colonne);
+			this.panelGrille.add(colonne);
 			springLayout.putConstraint(SpringLayout.WEST, colonne,
 					gaucheColonne,
 	                SpringLayout.WEST, this);
-			System.out.println(colonne.getBounds());
+			//System.out.println(colonne.getBounds());
 			droiteColonnePrecedente = colonne.getX() + colonne.getWidth();
 		}
 		
@@ -222,17 +275,28 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener{
 		for (JLigne ligne : listeLigne) {
 			int hautLigne = basLignePrecedente + HAUTEUR_POIGNEE_ENTETE_LIGNE;
 			ligne.setLocation(0,hautLigne);
-			this.add(ligne);
+			this.panelGrille.add(ligne);
 			springLayout.putConstraint(SpringLayout.NORTH, ligne,
 	                hautLigne,
 	                SpringLayout.NORTH, this);
 			System.out.println(ligne.getBounds());
 			basLignePrecedente = ligne.getY() + ligne.getHeight();
 		}
+		System.out.println("Cellules créées : " + nombreCellulesCrees);
+		
+		
+	}
+	
+	/**
+	 * Scrolle d'une colonne sur la droite
+	 */
+	private void scrollerDroite() {
+		
 	}
 
 	@Override
 	public void onColonneInsered(Colonne colonne) {
+		//TODO, supprimer la colonne la plus à droite si elle n'est pas affichée?
 		creerComposant();
 		
 	}

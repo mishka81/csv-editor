@@ -3,6 +3,7 @@ package gui;
 import gui2.JTableur2;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class JLigne extends JPanel {
 		super();
 		this.numero = numero;
 		this.index = index;
+		this.setBackground(new Color(223,227,232));
 		
 		this.setLocation(1, y);
 		this.setSize(JTableur2.LARGEUR_NUMERO_LIGNE, hauteur);
