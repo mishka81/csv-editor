@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class JColonne extends JPanel{
 		
 		//popup menu
 		insererColonne.setAction(new InsererColonneAction(modele, numero));
-		insererColonne.setText("Insérer une colonne");
+		insererColonne.setText("Insï¿½rer une colonne");
         menuPopup.add(insererColonne);
         this.setComponentPopupMenu(menuPopup);
 	}
@@ -90,5 +91,9 @@ public class JColonne extends JPanel{
 	
 	public void addCellule(JCellule cellule) {
 		mapCelluleParIndexLigne.put(cellule.getLigne().getIndex(), cellule);
+	}
+	
+	public Collection<JCellule> getCollectionCellule() {
+		return mapCelluleParIndexLigne.values();
 	}
 }

@@ -127,7 +127,11 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 			    if (source instanceof BoundedRangeModel) {
 			      BoundedRangeModel aModel = (BoundedRangeModel) source;
 			      if (!aModel.getValueIsAdjusting()) {
-			    	System.out.println(scrollbarHorizontal.getValue());  
+			    	int difference = aModel.getValue() - numeroCelluleGauche;
+					if (difference > 0) {
+			    		//l'ascenseur a été déplacé vers la droite
+			    		scrollerDroite(difference);
+			    	}
 			        System.out.println("Changed: " + aModel.getValue());
 			      }
 			    } else {
@@ -178,6 +182,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	}
 
 	private void creerComposant() {
+		nombreCellulesCrees=0;
 		//supprime le composant tel qu'il existe
 		//TODO supprimer les listeners des JCellule vers les cellules
 		for (JLigne jLigne : this.listeLigne) {
@@ -298,8 +303,43 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	
 	/**
 	 * Scrolle d'une colonne sur la droite
+	 * @param difference 
 	 */
-	private void scrollerDroite() {
+	private void scrollerDroite(final int difference) {
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				int largeurColonneSupprimee = 0;
+				for (int i = 0;i<difference;i++) {
+					//supprime les colonnes de gauche
+					JColonne jColonne = listeColonne.get(0);
+					Collection<JCellule> collectionCellule = jColonne.getCollectionCellule();
+					for (JCellule jCellule : collectionCellule) {
+						panelGrille.remove(jCellule);
+					}
+					listeColonne.remove(0);
+					panelGrille.remove(jColonne);
+					largeurColonneSupprimee+= jColonne.getWidth() + LARGEUR_POIGNEE_ENTETE_COLONNE;
+				}
+				
+				numeroCelluleGauche += difference;
+				
+				//décalle les colonnes suivantes
+				for (JColonne jColonne : listeColonne) {
+					jColonne.setLocation(jColonne.getX() - largeurColonneSupprimee, jColonne.getY());
+					//TODO utiliser le layout pourdéplacer la colonne
+				}
+				
+				//ajoute des colonnes à droite
+				//TODO
+				
+				panelGrille.updateUI();
+				
+			}
+		});
+		
+		
 		
 	}
 
