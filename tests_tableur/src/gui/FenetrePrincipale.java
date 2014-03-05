@@ -24,10 +24,12 @@ public class FenetrePrincipale extends JFrame{
 		
 		this.setPreferredSize(new Dimension(1024,480));
 		
-		this.getContentPane().add(new JTableur2(modele, this));
+		JTableur2 jTableur2 = new JTableur2(modele, this);
+		this.getContentPane().add(jTableur2);
 		
 		
 		this.pack();
+		jTableur2.initialize();
 		this.setLocationRelativeTo(null);
 //		this.getRootPane().updateUI();
 //		this.getRootPane().update(this.getRootPane().getGraphics());
