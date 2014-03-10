@@ -7,7 +7,10 @@ import gui.Zone;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.HierarchyBoundsAdapter;
+import java.awt.event.HierarchyEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,15 +28,14 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import modele.Cellule;
-import modele.Colonne;
-import modele.TableurModele;
-import modele.TableurModeleStructureListener;
+import modele.modele2.Cellule;
+import modele.modele2.TableurModele3;
+import modele.modele2.TableurModeleStructureListener;
 
 public class JTableur2 extends JPanel implements TableurModeleStructureListener {
 
 	public static final int HAUTEUR_ENTETE_COLONNE = 30;
-	public static final int LARGEUR_POIGNEE_ENTETE_COLONNE = 1;
+	public static final int LARGEUR_POIGNEE_ENTETE_COLONNE = 3;
 	public static final int LARGEUR_NUMERO_LIGNE = 40;
 	public static final int LARGEUR_DEFAUT_COLONNE = 100;
 	public static final int HAUTEUR_POIGNEE_ENTETE_LIGNE = 1;
@@ -44,10 +46,11 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	private static final long serialVersionUID = 1L;
 
 	List<JColonne> listeColonne = new ArrayList<JColonne>();
+
 	List<JLigne> listeLigne = new ArrayList<JLigne>();
 	JCellule celluleSelectionnee;
 
-	TableurModele modele;
+	TableurModele3 modele;
 	SpringLayout springLayout = new SpringLayout();
 	JScrollBar scrollbarHorizontal = new JScrollBar(JScrollBar.HORIZONTAL);
 	JScrollBar scrollbarVertical = new JScrollBar(JScrollBar.VERTICAL);
@@ -58,7 +61,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	/**
 	 * numero de la colonne collée au bord gauche
 	 */
-	int numeroCelluleGauche = 3;
+	int numeroCelluleGauche = 0;
 
 	/**
 	 * Numéro de la colonne collée au haut de l'écran
@@ -104,7 +107,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		this.setCelluleSelectionne(colonne.getCelluleOnTheBottom(cellule));
 	}
 
-	public JTableur2(TableurModele modele, JFrame fenetrePrincipale) {
+	public JTableur2(TableurModele3 modele, JFrame fenetrePrincipale) {
 		super();
 		this.modele = modele;
 		this.fenetrePrincipale = fenetrePrincipale;
@@ -147,7 +150,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		this.modele.addModeleStructureListener(this);
 
 		// creerComposant();
-		creerZoneComposant(numeroCelluleGauche, modele.getNbColonnes(), 0, modele.getNbLignes());
+		creerZoneComposant(numeroCelluleGauche, modele.getNbColonnes() - 1, 0, modele.getNbLignes() - 1);
 
 		// Ajout des listener globaux
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "selectionnerCelluleSurLaDroite");
@@ -179,6 +182,22 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				JTableur2.this.selectCelluleOnBottom(JTableur2.this.celluleSelectionnee);
+			}
+		});
+
+		this.addHierarchyBoundsListener(new HierarchyBoundsAdapter() {
+			@Override
+			public void ancestorResized(HierarchyEvent e) {
+				super.ancestorResized(e);
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						fillColonnesDroite();
+						updateUI();
+					}
+				});
+
 			}
 		});
 	}
@@ -237,7 +256,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 							x = jColonnePrecedente.getX() + LARGEUR_POIGNEE_ENTETE_COLONNE + jColonnePrecedente.getWidth();
 						}
 
-						listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100));
+						listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100, JTableur2.this));
 					}
 					JColonne colonne = this.listeColonne.get(numeroColonne - this.numeroCelluleGauche);
 
@@ -332,7 +351,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 				JColonne derniereJColonneAffichee = listeColonne.get(listeColonne.size() - 1);
 				int dernierNumeroColonneAffiche = derniereJColonneAffichee.getNumero();
 
-				listeColonne.add(new JColonne(modele, dernierNumeroColonneAffiche + 1, dernierNumeroColonneAffiche + 1, derniereJColonneAffichee.getDroiteColonne() + LARGEUR_POIGNEE_ENTETE_COLONNE, 100));
+				listeColonne.add(new JColonne(modele, dernierNumeroColonneAffiche + 1, dernierNumeroColonneAffiche + 1, derniereJColonneAffichee.getDroiteColonne() + LARGEUR_POIGNEE_ENTETE_COLONNE, 100, JTableur2.this));
 
 				int numeroLigne = numeroCelluleHaut;
 				boolean firstCellule = true;
@@ -359,7 +378,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 									x = jColonnePrecedente.getX() + LARGEUR_POIGNEE_ENTETE_COLONNE + jColonnePrecedente.getWidth();
 								}
 
-								listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100));
+								listeColonne.add(new JColonne(modele, numeroColonne, numeroColonne, x, 100, JTableur2.this));
 							}
 							JColonne colonne = listeColonne.get(numeroColonne - dernierNumeroColonneAffiche);
 
@@ -407,21 +426,22 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 
 	}
 
-	@Override
-	public void onColonneInsered(final Colonne colonne) {
-		// TODO, supprimer la colonne la plus à droite si elle n'est pas
-		// affichée?
-		// creerComposant();
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				insererTitreDeColonne(colonne.getNumero(), colonne.getNumero(), numeroCelluleGauche);
-				JTableur2.this.updateUI();
-			}
-		});
-
-	}
+	// @Override
+	// public void onColonneInsered(final Colonne colonne) {
+	// // TODO, supprimer la colonne la plus à droite si elle n'est pas
+	// // affichée?
+	// // creerComposant();
+	// SwingUtilities.invokeLater(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// insererTitreDeColonne(colonne.getNumero(), colonne.getNumero(),
+	// colonne.getNumero() - numeroCelluleGauche);
+	// JTableur2.this.updateUI();
+	// }
+	// });
+	//
+	// }
 
 	// ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -441,9 +461,10 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 			// l'index represente l'index dans la liste
 			int index = indexMin - numeroColonneMin + i;
 			int positionGauche = getCoordonneeGauche(index);
-			JColonne jColonne = new JColonne(modele, i, index, positionGauche, LARGEUR_DEFAUT_COLONNE);
+			JColonne jColonne = new JColonne(modele, i, index, positionGauche, LARGEUR_DEFAUT_COLONNE, this);
 			JTableur2.this.panelGrille.add(jColonne);
 			listeColonne.add(index, jColonne);
+
 			springLayout.putConstraint(SpringLayout.WEST, jColonne, positionGauche, SpringLayout.WEST, JTableur2.this);
 			System.out.println("Entête de colonne " + i + " créée à l'index " + index);
 
@@ -454,8 +475,8 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 
 		// décalle les colonnes suivantes si il y en a
 		int nombreColonnesInserees = numeroColonneMax - numeroColonneMin + 1;
-		int indexDerniereColonne = numeroColonneMax - indexMin;
-		int indexADecaller = indexDerniereColonne + 1;
+		int indexDerniereColonneInseree = indexMin + nombreColonnesInserees - 1;
+		int indexADecaller = indexDerniereColonneInseree + 1;
 		while (indexADecaller < listeColonne.size()) {
 			JColonne jColonne = listeColonne.get(indexADecaller);
 			jColonne.setIndex(indexADecaller);
@@ -482,7 +503,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		}
 		if (indexColonne <= listeColonne.size()) {
 			JColonne jColonnePrecedente = listeColonne.get(indexColonne - 1);
-			return jColonnePrecedente.getX() + jColonnePrecedente.getWidth() + LARGEUR_POIGNEE_ENTETE_COLONNE;
+			return jColonnePrecedente.getX() + jColonnePrecedente.getWidth();
 		}
 		throw new RuntimeException("Impossible de récupérer la coordonnée gauche de la colonne à l'index " + indexColonne + " car actuellement, il n'existe que " + listeColonne.size() + " colonnes.");
 	}
@@ -500,7 +521,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		}
 		if (indexColonne < listeColonne.size()) {
 			JColonne jColonne = listeColonne.get(indexColonne);
-			return jColonne.getX() + jColonne.getWidth() + LARGEUR_POIGNEE_ENTETE_COLONNE;
+			return jColonne.getX() + jColonne.getWidth();
 		}
 		throw new RuntimeException("Impossible de récupérer la coordonnée droite de la colonne à l'index " + indexColonne + " car actuellement, il n'existe que " + listeColonne.size() + " colonnes.");
 	}
@@ -522,5 +543,93 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		// TODO si le décallage fait que la dernière ligne/colonne finit dans
 		// les limites du composant, on en charge d'autres jusqu'à revenir au
 		// bord du composant
+	}
+
+	public void setLargeurColonne(JColonne colonne, int nouvelleLargeur) {
+		colonne.setPreferredSize(new Dimension(nouvelleLargeur, JTableur2.HAUTEUR_ENTETE_COLONNE));
+		colonne.setSize(nouvelleLargeur, JTableur2.HAUTEUR_ENTETE_COLONNE);
+
+		int indexColonneRedimmensionnee = colonne.getIndex();
+		for (int indexColonneADeplacer = indexColonneRedimmensionnee + 1; indexColonneADeplacer < listeColonne.size(); indexColonneADeplacer++) {
+			JColonne jColonne = listeColonne.get(indexColonneADeplacer);
+			int positionDroiteColonnePrecedente = getCoordonneeDroite(indexColonneADeplacer - 1);
+
+			jColonne.setLocation(positionDroiteColonnePrecedente, 0);
+			springLayout.putConstraint(SpringLayout.WEST, jColonne, positionDroiteColonnePrecedente, SpringLayout.WEST, JTableur2.this);
+		}
+
+		fillColonnesDroite();
+
+		updateUI();
+	}
+
+	/**
+	 * Charge des colonnes à droite si besoin Utile dans le cas où une colonne a
+	 * été supprimée, redimmensionnée, si la fenêtre a été redimmensionnée
+	 */
+	public void fillColonnesDroite() {
+		JColonne jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
+		int droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
+		while (droiteDerniereColonne < this.getWidth() && jDerniereColonne.getNumero() + 1 < modele.getNbColonnes()) {
+			insererTitreDeColonne(jDerniereColonne.getNumero() + 1, jDerniereColonne.getNumero() + 1, jDerniereColonne.getIndex() + 1);
+
+			jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
+			droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
+		}
+	}
+
+	@Override
+	public void onColonneInsered(final int numero) {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				insererTitreDeColonne(numero, numero, numero - numeroCelluleGauche);
+				JTableur2.this.updateUI();
+			}
+		});
+
+	}
+
+	@Override
+	public void onColonneRemoved(final int numero) {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				supprimerTitreDeColonne(numero, numero, numero - numeroCelluleGauche);
+				JTableur2.this.updateUI();
+			}
+		});
+
+	}
+
+	protected void supprimerTitreDeColonne(int numeroColonneMin, int numeroColonneMax, int indexMin) {
+		// Supprime les colonnes
+		for (int i = numeroColonneMin; i <= numeroColonneMax; i++) {
+			JColonne colonneASupprimer = listeColonne.get(indexMin);
+			listeColonne.remove(colonneASupprimer);
+			this.panelGrille.remove(colonneASupprimer);
+		}
+
+		// décalle les colonnes suivantes si il y en a
+		int nombreColonnesSupprimees = numeroColonneMax - numeroColonneMin + 1;
+		int indexPremiereColonneSupprimee = indexMin;
+		int indexADecaller = indexPremiereColonneSupprimee;
+		while (indexADecaller < listeColonne.size()) {
+			JColonne jColonne = listeColonne.get(indexADecaller);
+			jColonne.setIndex(indexADecaller);
+			jColonne.setNumero(jColonne.getNumero() - nombreColonnesSupprimees);
+			int positionDroiteColonnePrecedente = LARGEUR_NUMERO_LIGNE;
+			if (indexADecaller != 0) {
+				positionDroiteColonnePrecedente = getCoordonneeDroite(indexADecaller - 1);
+			}
+
+			jColonne.setLocation(positionDroiteColonnePrecedente, 0);
+			springLayout.putConstraint(SpringLayout.WEST, jColonne, positionDroiteColonnePrecedente, SpringLayout.WEST, JTableur2.this);
+			indexADecaller++;
+		}
+		fillColonnesDroite();
+
 	}
 }

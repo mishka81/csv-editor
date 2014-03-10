@@ -4,51 +4,43 @@ import gui2.JTableur2;
 
 import java.awt.Dimension;
 
-import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
-import modele.TableurModele; 
+import modele.modele2.TableurModele3;
 
-public class FenetrePrincipale extends JFrame{
+public class FenetrePrincipale extends JFrame {
 
 	public FenetrePrincipale() {
 		super();
-		
-		TableurModele modele = new TableurModele();
-		//creerModeleLeger(modele);
+
+		TableurModele3 modele = new TableurModele3();
+		// creerModeleLeger2(modele);
 		creerModeleLourd(modele);
-		
-		
-		
-		
-		this.setPreferredSize(new Dimension(1024,480));
-		
+
+		this.setPreferredSize(new Dimension(1024, 480));
+
 		JTableur2 jTableur2 = new JTableur2(modele, this);
 		this.getContentPane().add(jTableur2);
-		
-		
+
 		this.pack();
 		jTableur2.initialize();
 		this.setLocationRelativeTo(null);
-//		this.getRootPane().updateUI();
-//		this.getRootPane().update(this.getRootPane().getGraphics());
-		
-		
+		// this.getRootPane().updateUI();
+		// this.getRootPane().update(this.getRootPane().getGraphics());
+
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		
-		
+
 	}
-	
-	private void creerModeleLourd(TableurModele modele) {
-		for (int i = 0;i < 20;i++) {
-			for (int j = 0;j < 20;j++) {
-				modele.setValeur(i, j, i + "." +j);
+
+	private void creerModeleLourd(TableurModele3 modele) {
+		for (int i = 0; i < 200; i++) {
+			for (int j = 0; j < 200; j++) {
+				modele.setValeur(i, j, i + "." + j);
 			}
 		}
 	}
 
-	private void creerModeleLeger(TableurModele modele) {
+	private void creerModeleLeger(TableurModele3 modele) {
 		modele.setValeur(0, 0, "0.0");
 		modele.setValeur(0, 1, "0.1");
 		modele.setValeur(0, 2, "0.2");
@@ -72,6 +64,16 @@ public class FenetrePrincipale extends JFrame{
 		modele.setValeur(4, 4, "4.4");
 	}
 
-	
-	
+	private void creerModeleLeger2(TableurModele3 modele) {
+		modele.setValeur(0, 0, "0.0");
+		modele.setValeur(0, 1, "0.1");
+		modele.setValeur(0, 2, "0.2");
+		modele.setValeur(0, 3, "0.3");
+		modele.setValeur(1, 0, "1.0");
+		modele.setValeur(1, 1, "1.1");
+		modele.setValeur(1, 2, "1.2");
+		modele.setValeur(1, 3, "1.3");
+
+	}
+
 }

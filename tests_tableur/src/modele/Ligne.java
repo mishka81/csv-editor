@@ -4,21 +4,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Ligne {
 	private int numero;
-	
+
 	private String nom;
-	
-	int numeroColonneMax=0;
-	
+
+	int numeroColonneMax = 0;
 
 	private Map<Integer, Cellule> mapCelluleParNumeroColonne = new HashMap<Integer, Cellule>();
-	
+
 	public Ligne(int numero) {
 		this(numero, String.valueOf(numero));
 	}
-	
+
 	public Ligne(int numero, String nom) {
 		super();
 		this.numero = numero;
@@ -28,7 +26,7 @@ public class Ligne {
 	public String getNom() {
 		return nom;
 	}
-	
+
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
@@ -36,18 +34,19 @@ public class Ligne {
 	public int getNumero() {
 		return numero;
 	}
+
 	public void setNumero(int numero) {
 		this.numero = numero;
 	}
-	
+
 	public void addCellule(Cellule cellule) {
 		int numeroColonne = cellule.getColonne().getNumero();
-		if (numeroColonne > numeroColonneMax){
+		if (numeroColonne > numeroColonneMax) {
 			numeroColonneMax = numeroColonne;
 		}
 		mapCelluleParNumeroColonne.put(numeroColonne, cellule);
 	}
-	
+
 	public Cellule getCelluleInColonne(int numeroColonne) {
 		return mapCelluleParNumeroColonne.get(numeroColonne);
 	}
@@ -57,25 +56,26 @@ public class Ligne {
 	}
 
 	public void insertNewCellule(TableurModele modele, Colonne colonne) {
-		//décale toutes les cellules suivantes vers la droite
+		// dï¿½cale toutes les cellules suivantes vers la droite
 		int numeroColonne = colonne.getNumero();
 		boolean creerCellule = false;
-		for (int i = numeroColonneMax;i >= numeroColonne;i--) {
-			mapCelluleParNumeroColonne.put(i+1, mapCelluleParNumeroColonne.get(i));
+		for (int i = numeroColonneMax; i >= numeroColonne; i--) {
+			mapCelluleParNumeroColonne.put(i + 1, mapCelluleParNumeroColonne.get(i));
 			creerCellule = true;
 		}
-		
-		//La cellule ne doit être créée que dans le cas où la colonne n'a pas été insérée
-		//après la dernière colonne de la ligne
+
+		// La cellule ne doit ï¿½tre crï¿½ï¿½e que dans le cas oï¿½ la colonne n'a pas
+		// ï¿½tï¿½ insï¿½rï¿½e
+		// aprï¿½s la derniï¿½re colonne de la ligne
 		if (creerCellule) {
 			new Cellule(modele, colonne, this, "");
 			numeroColonneMax++;
 		}
-		
+
 	}
-	
+
 	public Collection<Cellule> getCollectionCellule() {
 		return mapCelluleParNumeroColonne.values();
 	}
-	
+
 }

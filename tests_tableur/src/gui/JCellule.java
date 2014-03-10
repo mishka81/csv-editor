@@ -9,26 +9,20 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
-import modele.Cellule;
-import modele.CelluleListener;
-
+import modele.modele2.Cellule;
+import modele.modele2.CelluleListener;
 
 public class JCellule extends JPanel implements CelluleListener {
 
@@ -36,22 +30,22 @@ public class JCellule extends JPanel implements CelluleListener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
-	private static final int MODE_CONSULTATION = 0; 
-	private static final int MODE_MODIFICATION = 1; 
+
+	private static final int MODE_CONSULTATION = 0;
+	private static final int MODE_MODIFICATION = 1;
 	private int mode = MODE_CONSULTATION;
-	
+
 	private JColonne colonne;
 	private JLigne ligne;
-	
+
 	private JTextPane jLabelContenu;
 	private JTextArea jTextContenu;
 	private Zone contenu;
-	
+
 	Cellule celluleCorrespondante;
-	
+
 	JTableur2 tableur;
-	
+
 	private boolean selectionnee;
 
 	public boolean isSelectionnee() {
@@ -71,20 +65,20 @@ public class JCellule extends JPanel implements CelluleListener {
 		this.colonne = colonne;
 		this.ligne = ligne;
 		this.tableur = tableur;
-		
-		setBounds(colonne.getX(), ligne.getY(),colonne.getWidth(), ligne.getHeight());
+
+		setBounds(colonne.getX(), ligne.getY(), colonne.getWidth(), ligne.getHeight());
 		this.setSize(new Dimension(colonne.getWidth(), ligne.getHeight()));
 		this.setPreferredSize(new Dimension(colonne.getWidth(), ligne.getHeight()));
 		this.contenu = contenu;
 		setModeConsultation();
 	}
-	
+
 	public JTextPane getjLabelContenu() {
 		if (jLabelContenu == null) {
 			jLabelContenu = new JTextPane();
-			jLabelContenu.setOpaque(false); 
-			jLabelContenu.setFocusable(true); 
-			jLabelContenu.setEditable(false); 
+			jLabelContenu.setOpaque(false);
+			jLabelContenu.setFocusable(true);
+			jLabelContenu.setEditable(false);
 			jLabelContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "none");
 			jLabelContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "none");
 			jLabelContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "none");
@@ -101,7 +95,7 @@ public class JCellule extends JPanel implements CelluleListener {
 					e.consume();
 				}
 			});
-			
+
 			jLabelContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "editionCellule");
 			jLabelContenu.getActionMap().put("editionCellule", new AbstractAction() {
 				@Override
@@ -123,7 +117,7 @@ public class JCellule extends JPanel implements CelluleListener {
 					setModeConsultation();
 				}
 			});
-			
+
 			jTextContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "validationCellule");
 			jTextContenu.getActionMap().put("validationCellule", new AbstractAction() {
 				@Override
@@ -131,7 +125,7 @@ public class JCellule extends JPanel implements CelluleListener {
 					validerSaise();
 				}
 			});
-			
+
 			jTextContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "annulationCellule");
 			jTextContenu.getActionMap().put("annulationCellule", new AbstractAction() {
 				@Override
@@ -139,7 +133,7 @@ public class JCellule extends JPanel implements CelluleListener {
 					setModeConsultation();
 				}
 			});
-			
+
 			jTextContenu.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.ALT_MASK), "sauterLigne");
 			jTextContenu.getActionMap().put("sauterLigne", new AbstractAction() {
 				@Override
@@ -147,29 +141,30 @@ public class JCellule extends JPanel implements CelluleListener {
 					jTextContenu.setText(jTextContenu.getText() + "\n");
 				}
 			});
-			
-//			jTextContenu.addKeyListener(new KeyAdapter() {
-//				@Override
-//				public void keyPressed(KeyEvent e) {
-//					super.keyPressed(e);
-//					if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getModifiers() == KeyEvent.ALT_MASK) {
-//						jTextContenu.setText(jTextContenu.getText() + "\n");
-//					} else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-//						validerSaise();
-//					} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-//						setModeConsultation();
-//					} else {
-//						super.keyPressed(e);
-//					}
-//					e.consume();
-//				}
-//
-//				
-//			});
+
+			// jTextContenu.addKeyListener(new KeyAdapter() {
+			// @Override
+			// public void keyPressed(KeyEvent e) {
+			// super.keyPressed(e);
+			// if (e.getKeyCode() == KeyEvent.VK_ENTER && e.getModifiers() ==
+			// KeyEvent.ALT_MASK) {
+			// jTextContenu.setText(jTextContenu.getText() + "\n");
+			// } else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			// validerSaise();
+			// } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			// setModeConsultation();
+			// } else {
+			// super.keyPressed(e);
+			// }
+			// e.consume();
+			// }
+			//
+			//
+			// });
 		}
 		return jTextContenu;
 	}
-	
+
 	public void validerSaise() {
 		if (this.mode == MODE_MODIFICATION) {
 			contenu.setValeur(jTextContenu.getText());
@@ -180,7 +175,7 @@ public class JCellule extends JPanel implements CelluleListener {
 	public void setModeConsultation() {
 		this.mode = MODE_CONSULTATION;
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				JCellule.this.remove(getjTextContenu());
@@ -191,12 +186,11 @@ public class JCellule extends JPanel implements CelluleListener {
 			}
 		});
 	}
-	
-	
+
 	public void setModeEdition() {
 		this.mode = MODE_MODIFICATION;
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				JCellule.this.remove(getjLabelContenu());
@@ -207,27 +201,28 @@ public class JCellule extends JPanel implements CelluleListener {
 			}
 		});
 	}
-	
-	
 
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		if (isSelectionnee()) {
 			g.setColor(Color.BLUE);
-			g.drawRect(0, 0 , getWidth()-1, getHeight()-1);
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	}
 
 	public JColonne getColonne() {
 		return colonne;
 	}
+
 	public void setColonne(JColonne colonne) {
 		this.colonne = colonne;
 	}
+
 	public JLigne getLigne() {
 		return ligne;
 	}
+
 	public void setLigne(JLigne ligne) {
 		this.ligne = ligne;
 	}

@@ -1,11 +1,15 @@
 package gui;
 
 import gui.action.InsererColonneAction;
+import gui.action.SupprimerColonneAction;
 import gui2.JTableur2;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,8 +19,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
-import modele.TableurModele;
+import modele.modele2.TableurModele3;
 
 public class JColonne extends JPanel {
 	/**
@@ -27,14 +32,18 @@ public class JColonne extends JPanel {
 	private int index;
 
 	private JLabel jLabelNom;
+	private JPanel jPanelPoignee = new JPanel();
 
 	private Map<Integer, JCellule> mapCelluleParIndexLigne = new HashMap<Integer, JCellule>();
 
 	private JMenuItem insererColonne = new JMenuItem();
+	private JMenuItem supprimerColonne = new JMenuItem();
 	private JPopupMenu menuPopup = new JPopupMenu();
+	private final JTableur2 jTableur;
 
-	public JColonne(TableurModele modele, int numero, int index, int x, int largeur) {
+	public JColonne(TableurModele3 modele, int numero, int index, int x, int largeur, final JTableur2 jTableur) {
 		super();
+		this.jTableur = jTableur;
 		this.setLayout(new BorderLayout());
 		this.setBackground(new Color(223, 227, 232));
 
@@ -48,10 +57,38 @@ public class JColonne extends JPanel {
 		jLabelNom = new JLabel(String.valueOf(numero), SwingConstants.CENTER);
 		this.add(jLabelNom, BorderLayout.CENTER);
 
+		jPanelPoignee.setBackground(Color.BLUE);
+		jPanelPoignee.setPreferredSize(new Dimension(JTableur2.LARGEUR_POIGNEE_ENTETE_COLONNE, 0));
+		this.add(jPanelPoignee, BorderLayout.EAST);
+		jPanelPoignee.setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+
+		jPanelPoignee.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseDragged(final MouseEvent e) {
+				if (e.getX() != 0) {
+					SwingUtilities.invokeLater(new Runnable() {
+
+						@Override
+						public void run() {
+							int nouvelleLargeur = getWidth() + e.getX();
+							if (nouvelleLargeur > 20) {
+								jTableur.setLargeurColonne(JColonne.this, nouvelleLargeur);
+							}
+						}
+
+					});
+				}
+			}
+		});
+
 		// popup menu
-		insererColonne.setAction(new InsererColonneAction(modele, numero));
-		insererColonne.setText("Ins�rer une colonne");
+		insererColonne.setAction(new InsererColonneAction(modele, this));
+		insererColonne.setText("Insérer une colonne");
 		menuPopup.add(insererColonne);
+
+		supprimerColonne.setAction(new SupprimerColonneAction(modele, this));
+		supprimerColonne.setText("Supprimer une colonne");
+		menuPopup.add(supprimerColonne);
 		this.setComponentPopupMenu(menuPopup);
 	}
 
@@ -81,6 +118,7 @@ public class JColonne extends JPanel {
 
 	public void setNumero(int numero) {
 		this.numero = numero;
+		jLabelNom.setText(String.valueOf(numero));
 	}
 
 	public int getIndex() {

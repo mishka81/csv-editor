@@ -8,7 +8,7 @@ import javax.swing.AbstractAction;
 
 import modele.modele2.TableurModele3;
 
-public class InsererColonneAction extends AbstractAction {
+public class SupprimerColonneAction extends AbstractAction {
 
 	/**
 	 * 
@@ -17,14 +17,14 @@ public class InsererColonneAction extends AbstractAction {
 	private JColonne colonne;
 	private TableurModele3 modele;
 
-	public InsererColonneAction(TableurModele3 modele, JColonne colonne) {
+	public SupprimerColonneAction(TableurModele3 modele, JColonne colonne) {
 		this.modele = modele;
 		this.colonne = colonne;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		modele.insererColonne(colonne.getNumero());
+		modele.supprimerColonne(colonne.getNumero());
 
 	}
 
