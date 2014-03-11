@@ -33,8 +33,8 @@ public class FenetrePrincipale extends JFrame {
 	}
 
 	private void creerModeleLourd(TableurModele3 modele) {
-		for (int i = 0; i < 200; i++) {
-			for (int j = 0; j < 200; j++) {
+		for (int i = 0; i < 50; i++) {
+			for (int j = 0; j < 50; j++) {
 				modele.setValeur(i, j, i + "." + j);
 			}
 		}
