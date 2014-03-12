@@ -132,16 +132,15 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 				Object source = e.getSource();
 				if (source instanceof BoundedRangeModel) {
 					BoundedRangeModel aModel = (BoundedRangeModel) source;
-					if (!aModel.getValueIsAdjusting()) {
-						int difference = aModel.getValue() - numeroCelluleGauche;
-						if (difference > 0) {
-							// l'ascenseur a été déplacé vers la droite
-							scrollerDroite(difference);
-						} else {
-							scrollerGauche(-difference);
-						}
-						System.out.println("Changed: " + aModel.getValue());
+					// if (!aModel.getValueIsAdjusting()) {
+					int difference = aModel.getValue() - numeroCelluleGauche;
+					if (difference > 0) {
+						// l'ascenseur a été déplacé vers la droite
+						scrollerDroite(difference);
+					} else {
+						scrollerGauche(-difference);
 					}
+					// }
 				} else {
 					System.out.println("Something changed: " + source);
 				}
@@ -595,10 +594,18 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	 * été supprimée, redimmensionnée, si la fenêtre a été redimmensionnée
 	 */
 	public void fillColonnesDroite() {
-		JColonne jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
-		int droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
-		while (droiteDerniereColonne < this.getWidth() && jDerniereColonne.getNumero() + 1 < modele.getNbColonnes()) {
-			insererTitreDeColonne(jDerniereColonne.getNumero() + 1, jDerniereColonne.getNumero() + 1, jDerniereColonne.getIndex() + 1);
+		int droiteDerniereColonne = LARGEUR_NUMERO_LIGNE;
+		int numeroDerniereColonne = numeroCelluleGauche - 1;
+		int indexDerniereColonne = -1;
+		JColonne jDerniereColonne;
+		if (listeColonne.size() != 0) {
+			jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
+			droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
+			numeroDerniereColonne = jDerniereColonne.getNumero();
+			indexDerniereColonne = jDerniereColonne.getIndex();
+		}
+		while (droiteDerniereColonne < this.getWidth() && numeroDerniereColonne + 1 < modele.getNbColonnes()) {
+			insererTitreDeColonne(numeroDerniereColonne + 1, numeroDerniereColonne + 1, indexDerniereColonne + 1);
 
 			jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
 			droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
@@ -666,8 +673,21 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		// Ne pas utiliser insérerTitreColonne (car modifie le numéro des
 		// colonnes suivantes), mais plutôt créer une nouvelle colonne
 
-		numeroCelluleGauche -= nombreColonnes;
-		for (int i = nombreColonnes; i < listeColonne.size(); i++) {
+		for (int i = 0; i < nombreColonnes; i++) {
+			JColonne jColonne = new JColonne(modele, numeroCelluleGauche - 1, 0, LARGEUR_NUMERO_LIGNE, LARGEUR_DEFAUT_COLONNE, this);
+
+			JTableur2.this.panelGrille.add(jColonne);
+			listeColonne.add(0, jColonne);
+
+			for (int j = 1; j < listeColonne.size(); j++) {
+				JColonne jColonneADecaler = listeColonne.get(j);
+				jColonneADecaler.setIndex(jColonneADecaler.getIndex() + 1);
+			}
+
+			numeroCelluleGauche--;
+		}
+
+		for (int i = 0; i < listeColonne.size(); i++) {
 			replacerColonne(listeColonne.get(i));
 		}
 		updateUI();
@@ -679,6 +699,9 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 			JColonne jColonne = listeColonne.get(0);
 			listeColonne.remove(0);
 			this.panelGrille.remove(jColonne);
+			if (listeColonne.size() == 0) {
+				break;
+			}
 		}
 
 		// Décale les cellules restantes
