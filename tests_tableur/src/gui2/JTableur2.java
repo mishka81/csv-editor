@@ -137,7 +137,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 						if (difference > 0) {
 							// l'ascenseur a été déplacé vers la droite
 							scrollerDroite(difference);
-						} else {
+						} else { 
 							scrollerGauche(-difference);
 						}
 						System.out.println("Changed: " + aModel.getValue());
