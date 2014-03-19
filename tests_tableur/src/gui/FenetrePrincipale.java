@@ -12,6 +12,7 @@ public class FenetrePrincipale extends JFrame {
 
 	public FenetrePrincipale() {
 		super();
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		TableurModele3 modele = new TableurModele3();
 		// creerModeleLeger2(modele);
@@ -19,7 +20,7 @@ public class FenetrePrincipale extends JFrame {
 
 		this.setPreferredSize(new Dimension(1024, 480));
 
-		JTableur2 jTableur2 = new JTableur2(modele, this);
+		JTableur2 jTableur2 = new JTableur2(modele);
 		this.getContentPane().add(jTableur2);
 
 		this.pack();
