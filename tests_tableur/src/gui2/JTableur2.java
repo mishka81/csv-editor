@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+ 
 import javax.swing.AbstractAction;
 import javax.swing.BoundedRangeModel;
 import javax.swing.JComponent;
@@ -495,7 +495,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		ColonneHelper.getInstance(this).replacerListeColonne(0);
 
 		supprimerEnteteColonneDroite();
-		updateUI();
+		updateUI(); 
 	}
 
 	private void scrollerDroite(int nombreColonnes) {
