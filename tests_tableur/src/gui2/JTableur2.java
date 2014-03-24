@@ -360,10 +360,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		// // Renumérote les colonnes suivantes
 		int nombreColonnesInserees = numeroColonneMax - numeroColonneMin + 1;
 		int indexADecaller = indexDerniereColonneInseree + 1;
-		for (int i = indexADecaller; i < listeColonne.size(); i++) {
-			JColonne jColonne = listeColonne.get(i);
-			jColonne.setNumero(jColonne.getNumero() + nombreColonnesInserees);
-		}
+		renumeroterColonnes(indexADecaller, nombreColonnesInserees);
 
 		setValeurMaximumHorizontalScrollbar();
 		System.out.println("nombre de colonnes chargées (après insersion) : " + listeColonne.size());
@@ -447,13 +444,17 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 
 		// décalle les colonnes suivantes si il y en a
 		int nombreColonnesSupprimees = numeroColonneMax - numeroColonneMin + 1;
+		renumeroterColonnes(indexMin, -nombreColonnesSupprimees);
+		System.out.println("nombre de colonnes chargées (après suppression) : " + listeColonne.size());
+	}
+
+	private void renumeroterColonnes(int indexMin, int nombreColonnesDelta) {
 		int indexADecaller = indexMin;
 		while (indexADecaller < listeColonne.size()) {
 			JColonne jColonne = listeColonne.get(indexADecaller);
-			jColonne.setNumero(jColonne.getNumero() - nombreColonnesSupprimees);
+			jColonne.setNumero(jColonne.getNumero() + nombreColonnesDelta);
 			indexADecaller++;
 		}
-		System.out.println("nombre de colonnes chargées (après suppression) : " + listeColonne.size());
 	}
 
 	private void scrollerGauche(int nombreColonnes) {
