@@ -2,21 +2,31 @@ package gui2;
 
 import gui.JColonne;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 
 public class ColonneHelper {
+
+	private List<Integer> largeurColonne = new ArrayList<Integer>();
 
 	private static ColonneHelper instance;
 	private JTableur2 jTableur2;
 
 	private ColonneHelper(JTableur2 jTableur2) {
 		this.jTableur2 = jTableur2;
+		int nbColonnes = jTableur2.modele.getNbColonnes();
+		for (int i = 0; i < nbColonnes; i++) {
+			largeurColonne.add(JTableur2.LARGEUR_DEFAUT_COLONNE);
+		}
 	}
 
 	public static ColonneHelper getInstance(JTableur2 jTableur2) {
 		if (instance == null) {
 			instance = new ColonneHelper(jTableur2);
+
 		}
 		return instance;
 	}
@@ -112,5 +122,32 @@ public class ColonneHelper {
 		for (int i = indexMin; i < jTableur2.listeColonne.size(); i++) {
 			replacerColonne(jTableur2.listeColonne.get(i));
 		}
+	}
+
+	public int insererComposantTitreDeColonne(int numeroColonneMin, int numeroColonneMax, int indexMin) {
+		int nombreColonnesInserees = numeroColonneMax - numeroColonneMin + 1;
+		for (int i = numeroColonneMin; i <= numeroColonneMax; i++) {
+			// l'index represente l'index dans la liste
+			int index = indexMin - numeroColonneMin + i;
+			int positionGauche = getCoordonneeGauche(index);
+			JColonne jColonne = new JColonne(jTableur2.modele, i, index, positionGauche, JTableur2.LARGEUR_DEFAUT_COLONNE, jTableur2);
+			jTableur2.panelGrille.add(jColonne);
+			jTableur2.listeColonne.add(index, jColonne);
+
+			replacerColonne(jColonne);
+
+			if (getCoordonneeDroite(index) >= jTableur2.getWidth()) {
+				break;
+			}
+		}
+
+		// décalle les colonnes suivantes si il y en a
+
+		int indexDerniereColonneInseree = indexMin + nombreColonnesInserees - 1;
+		int indexADecaller = indexDerniereColonneInseree + 1;
+
+		reindexerListeColonne(indexADecaller);
+		replacerListeColonne(indexADecaller);
+		return indexDerniereColonneInseree;
 	}
 }
