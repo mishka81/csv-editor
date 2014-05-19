@@ -15,8 +15,8 @@ public class FenetrePrincipale extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
 		TableurModele3 modele = new TableurModele3();
-		// creerModeleLeger2(modele);
-		creerModeleLourd(modele);
+		creerModeleLeger(modele);
+		// creerModeleLourd(modele);
 
 		this.setPreferredSize(new Dimension(1024, 480));
 

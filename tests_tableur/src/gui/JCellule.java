@@ -167,7 +167,9 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	public void validerSaise() {
 		if (this.mode == MODE_MODIFICATION) {
-			contenu.setValeur(jTextContenu.getText());
+			if (contenu != null) {
+				contenu.setValeur(jTextContenu.getText());
+			}
 			setModeConsultation();
 		}
 	}
@@ -180,7 +182,9 @@ public class JCellule extends JPanel implements CelluleListener {
 			public void run() {
 				JCellule.this.remove(getjTextContenu());
 				JCellule.this.add(getjLabelContenu());
-				getjLabelContenu().setText(contenu.getValeur());
+				if (contenu != null) {
+					getjLabelContenu().setText(contenu.getValeur());
+				}
 				getjLabelContenu().requestFocus();
 				JCellule.this.updateUI();
 			}
@@ -195,7 +199,9 @@ public class JCellule extends JPanel implements CelluleListener {
 			public void run() {
 				JCellule.this.remove(getjLabelContenu());
 				JCellule.this.add(getjTextContenu());
-				getjTextContenu().setText(contenu.getValeur());
+				if (contenu != null) {
+					getjTextContenu().setText(contenu.getValeur());
+				}
 				getjTextContenu().requestFocus();
 				JCellule.this.updateUI();
 			}
@@ -207,6 +213,10 @@ public class JCellule extends JPanel implements CelluleListener {
 		super.paint(g);
 		if (isSelectionnee()) {
 			g.setColor(Color.BLUE);
+			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+
+		} else {
+			g.setColor(Color.LIGHT_GRAY);
 			g.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
 		}
 	}

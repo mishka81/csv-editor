@@ -74,6 +74,23 @@ public class TableurModele3 {
 
 	}
 
+	public void insererLigne(int numeroLigne) {
+		for (int numeroLigneADecaler = getNbLignes(); numeroLigneADecaler >= numeroLigne; numeroLigneADecaler--) {
+			for (int numeroColonne = 0; numeroColonne < getNbColonnes(); numeroColonne++) {
+				Cellule celluleADecaler = getCellule(numeroLigneADecaler, numeroColonne);
+				if (celluleADecaler != null) {
+					mapCelluleParCoordonnee.remove(celluleADecaler);
+					mapCelluleParCoordonnee.put(new Coordonnee(numeroLigneADecaler + 1, numeroColonne), celluleADecaler);
+				}
+			}
+		}
+		nbLignes++;
+		for (TableurModeleStructureListener tableurModeleStructureListener : listeTableurModeleStructureListener) {
+			tableurModeleStructureListener.onLigneInsered(numeroLigne);
+		}
+
+	}
+
 	private List<Cellule> getListeCellulesColonne(int numeroColonne) {
 		List<Cellule> listeCellule = new ArrayList<Cellule>();
 		int numeroLigne = 0;
@@ -93,8 +110,10 @@ public class TableurModele3 {
 			// Supprime la cellule
 			Coordonnee coordonneeCellule = new Coordonnee(numeroLigne, numero);
 			Cellule cellule = mapCelluleParCoordonnee.get(coordonneeCellule);
-			cellule.removeAllCelluleListener();
-			mapCelluleParCoordonnee.remove(coordonneeCellule);
+			if (cellule != null) {
+				cellule.removeAllCelluleListener();
+				mapCelluleParCoordonnee.remove(coordonneeCellule);
+			}
 
 			// décalle toutes les cellules suivantes
 			for (int numeroColonneADecaler = numero; numeroColonneADecaler < getNbColonnes(); numeroColonneADecaler++) {
@@ -109,6 +128,33 @@ public class TableurModele3 {
 
 		for (TableurModeleStructureListener tableurModeleStructureListener : listeTableurModeleStructureListener) {
 			tableurModeleStructureListener.onColonneRemoved(numero);
+		}
+
+	}
+
+	public void supprimerLigne(int numeroLigne) {
+		for (int numeroColonne = 0; numeroColonne < getNbColonnes(); numeroColonne++) {
+			// Supprime la cellule
+			Coordonnee coordonneeCellule = new Coordonnee(numeroLigne, numeroColonne);
+			Cellule cellule = mapCelluleParCoordonnee.get(coordonneeCellule);
+			if (cellule != null) {
+				cellule.removeAllCelluleListener();
+				mapCelluleParCoordonnee.remove(coordonneeCellule);
+			}
+
+			// décalle toutes les cellules suivantes
+			for (int numeroLigneADecaler = numeroLigne; numeroLigneADecaler < getNbLignes(); numeroLigneADecaler++) {
+				Cellule celluleADecaler = getCellule(numeroLigneADecaler, numeroColonne);
+				if (celluleADecaler != null) {
+					mapCelluleParCoordonnee.remove(celluleADecaler);
+					mapCelluleParCoordonnee.put(new Coordonnee(numeroLigneADecaler - 1, numeroColonne), celluleADecaler);
+				}
+			}
+		}
+		nbLignes--;
+
+		for (TableurModeleStructureListener tableurModeleStructureListener : listeTableurModeleStructureListener) {
+			tableurModeleStructureListener.onLigneRemoved(numeroLigne);
 		}
 
 	}

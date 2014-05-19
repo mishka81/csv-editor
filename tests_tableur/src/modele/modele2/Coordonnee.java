@@ -1,42 +1,42 @@
 package modele.modele2;
 
 public class Coordonnee {
-	private int x;
-	private int y;
+	private int colonne;
+	private int ligne;
 
-	public Coordonnee(int x, int y) {
+	public Coordonnee(int ligne, int colonne) {
 		super();
-		this.x = x;
-		this.y = y;
+		this.colonne = colonne;
+		this.ligne = ligne;
 	}
 
-	public int getX() {
-		return x;
+	public int getColonne() {
+		return colonne;
 	}
 
-	public void setX(int x) {
-		this.x = x;
+	public void setColonne(int colonne) {
+		this.colonne = colonne;
 	}
 
-	public int getY() {
-		return y;
+	public int getLigne() {
+		return ligne;
 	}
 
-	public void setY(int y) {
-		this.y = y;
+	public void setLigne(int ligne) {
+		this.ligne = ligne;
 	}
 
 	@Override
 	public String toString() {
-		return "Coordonnee [x=" + x + ", y=" + y + "]";
+		return "Coordonnee [ligne=" + ligne + ", colonne=" + colonne + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + x;
-		result = prime * result + y;
+		result = prime * result + colonne;
+		result = prime * result + ligne;
 		return result;
 	}
 
@@ -49,9 +49,9 @@ public class Coordonnee {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordonnee other = (Coordonnee) obj;
-		if (x != other.x)
+		if (colonne != other.colonne)
 			return false;
-		if (y != other.y)
+		if (ligne != other.ligne)
 			return false;
 		return true;
 	}

@@ -125,6 +125,7 @@ public class ColonneHelper {
 	}
 
 	public int insererComposantTitreDeColonne(int numeroColonneMin, int numeroColonneMax, int indexMin) {
+
 		int nombreColonnesInserees = numeroColonneMax - numeroColonneMin + 1;
 		for (int i = numeroColonneMin; i <= numeroColonneMax; i++) {
 			// l'index represente l'index dans la liste
