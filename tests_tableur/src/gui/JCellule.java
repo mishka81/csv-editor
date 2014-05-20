@@ -23,6 +23,7 @@ import javax.swing.border.EmptyBorder;
 
 import modele.modele2.Cellule;
 import modele.modele2.CelluleListener;
+import modele.modele2.TableurModele3;
 
 public class JCellule extends JPanel implements CelluleListener {
 
@@ -40,13 +41,14 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	private JTextPane jLabelContenu;
 	private JTextArea jTextContenu;
-	private Zone contenu;
 
 	Cellule celluleCorrespondante;
 
 	JTableur2 tableur;
 
 	private boolean selectionnee;
+
+	private TableurModele3 modele;
 
 	public boolean isSelectionnee() {
 		return selectionnee;
@@ -57,9 +59,12 @@ public class JCellule extends JPanel implements CelluleListener {
 		this.getjLabelContenu().requestFocus();
 	}
 
-	public JCellule(JTableur2 tableur, JColonne colonne, JLigne ligne, Zone contenu, Cellule cellule) {
+	public JCellule(JTableur2 tableur, JColonne colonne, JLigne ligne, Cellule cellule, TableurModele3 modele) {
 		super();
-		this.setBackground(Color.WHITE);
+		this.celluleCorrespondante = cellule;
+		updateCelluleColor();
+		this.modele = modele;
+
 		this.setBorder(new EmptyBorder(2, 2, 2, 2));
 		this.setLayout(new BorderLayout());
 		this.colonne = colonne;
@@ -69,8 +74,15 @@ public class JCellule extends JPanel implements CelluleListener {
 		setBounds(colonne.getX(), ligne.getY(), colonne.getWidth(), ligne.getHeight());
 		this.setSize(new Dimension(colonne.getWidth(), ligne.getHeight()));
 		this.setPreferredSize(new Dimension(colonne.getWidth(), ligne.getHeight()));
-		this.contenu = contenu;
 		setModeConsultation();
+	}
+
+	private void updateCelluleColor() {
+		if (celluleCorrespondante == null) {
+			this.setBackground(new Color(220, 220, 220));
+		} else {
+			this.setBackground(Color.WHITE);
+		}
 	}
 
 	public JTextPane getjLabelContenu() {
@@ -167,11 +179,31 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	public void validerSaise() {
 		if (this.mode == MODE_MODIFICATION) {
-			if (contenu != null) {
-				contenu.setValeur(jTextContenu.getText());
+			if (celluleCorrespondante == null) {
+				genererCellule();
 			}
+			celluleCorrespondante.setContenu(jTextContenu.getText());
 			setModeConsultation();
 		}
+	}
+
+	private void genererCellule() {
+		modele.setValeur(this.getLigne().getNumero(), this.getColonne().getNumero(), "");
+		updateCelluleWithModele();
+	}
+
+	private void updateCelluleWithModele() {
+		if (celluleCorrespondante != null) {
+			// La cellule est déjà créée
+			return;
+		}
+		celluleCorrespondante = modele.getCellule(ligne.getNumero(), colonne.getNumero());
+		JCellule celluleOnTheLeft = ligne.getCelluleOnTheLeft(this);
+		updateCelluleColor();
+		if (celluleOnTheLeft != null) {
+			celluleOnTheLeft.updateCelluleWithModele();
+		}
+
 	}
 
 	public void setModeConsultation() {
@@ -182,8 +214,8 @@ public class JCellule extends JPanel implements CelluleListener {
 			public void run() {
 				JCellule.this.remove(getjTextContenu());
 				JCellule.this.add(getjLabelContenu());
-				if (contenu != null) {
-					getjLabelContenu().setText(contenu.getValeur());
+				if (celluleCorrespondante != null) {
+					getjLabelContenu().setText(celluleCorrespondante.getContenu());
 				}
 				getjLabelContenu().requestFocus();
 				JCellule.this.updateUI();
@@ -199,8 +231,8 @@ public class JCellule extends JPanel implements CelluleListener {
 			public void run() {
 				JCellule.this.remove(getjLabelContenu());
 				JCellule.this.add(getjTextContenu());
-				if (contenu != null) {
-					getjTextContenu().setText(contenu.getValeur());
+				if (celluleCorrespondante != null) {
+					getjTextContenu().setText(celluleCorrespondante.getContenu());
 				}
 				getjTextContenu().requestFocus();
 				JCellule.this.updateUI();
@@ -239,6 +271,9 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	@Override
 	public void onContenuChanged(String oldValue, String newValue) {
-		this.contenu.setValeur(newValue);
+		this.celluleCorrespondante.setContenu(newValue);
+		if (oldValue == null && newValue != null) {
+			this.setBackground(Color.WHITE);
+		}
 	}
 }

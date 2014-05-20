@@ -5,7 +5,6 @@ import gui.JLigne;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 
 public class LigneHelper {
@@ -72,7 +71,7 @@ public class LigneHelper {
 
 	private void positionnerLigne(JLigne jLigne, int positionHaut) {
 		jLigne.setLocation(0, positionHaut);
-		jTableur2.springLayout.putConstraint(SpringLayout.NORTH, jLigne, positionHaut, SpringLayout.NORTH, jTableur2);
+
 	}
 
 	/**

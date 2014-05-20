@@ -50,7 +50,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	JCellule celluleSelectionnee;
 
 	TableurModele3 modele;
-	SpringLayout springLayout = new SpringLayout();
+	public SpringLayout springLayout = new SpringLayout();
 	JScrollBar scrollbarHorizontal = new JScrollBar(JScrollBar.HORIZONTAL);
 	JScrollBar scrollbarVertical = new JScrollBar(JScrollBar.VERTICAL);
 	JPanel panelGrille = new JPanel();
@@ -454,7 +454,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 			for (int numeroColonne = numeroColonneMin; numeroColonne <= numeroColonneMax; numeroColonne++) {
 				JColonne colonne = listeColonne.get(numeroColonne);
 				JLigne ligne = listeLigne.get(numeroLigne);
-				JCellule jCellule = new JCellule(this, colonne, ligne, null, modele.getCellule(numeroLigne, numeroColonne));
+				JCellule jCellule = new JCellule(this, colonne, ligne, modele.getCellule(numeroLigne, numeroColonne), modele);
 				jCellule.setBounds(colonne.getX(), ligne.getY(), colonne.getWidth(), ligne.getHeight());
 				this.panelGrille.add(jCellule);
 				// nombreCellulesCrees++;
@@ -480,7 +480,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	}
 
 	public void setHauteurLigne(JLigne ligne, int nouvelleHauteur) {
-		ligne.setPreferredSize(new Dimension(JTableur2.LARGEUR_NUMERO_LIGNE, nouvelleHauteur));
+
 		ligne.setSize(JTableur2.LARGEUR_NUMERO_LIGNE, nouvelleHauteur);
 
 		LigneHelper.getInstance(this).replacerListeLigne(ligne.getIndex() + 1);

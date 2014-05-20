@@ -21,6 +21,13 @@ public class TableurModele3 {
 			Cellule cellule = new Cellule(valeur);
 			mapCelluleParCoordonnee.put(coordonnee, cellule);
 
+			// Génère les cellules à gauche de celle en cours si besoin
+			if (colonne != 0) {
+				Coordonnee coordonneeGauche = new Coordonnee(ligne, colonne - 1);
+				if (mapCelluleParCoordonnee.get(coordonneeGauche) == null) {
+					setValeur(ligne, colonne - 1, "");
+				}
+			}
 			if (colonne + 1 > nbColonnes) {
 				nbColonnes = colonne + 1;
 			}

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.Collection;
@@ -18,11 +19,13 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SpringLayout;
 import javax.swing.SwingUtilities;
 
 import modele.modele2.TableurModele3;
 
 public class JLigne extends JPanel {
+
 	/**
 	 * 
 	 */
@@ -50,7 +53,6 @@ public class JLigne extends JPanel {
 		this.index = index;
 		this.setLocation(1, y);
 		this.setSize(JTableur2.LARGEUR_NUMERO_LIGNE, hauteur);
-		this.setPreferredSize(new Dimension(JTableur2.LARGEUR_NUMERO_LIGNE, hauteur));
 
 		jLabelNom = new JLabel(String.valueOf(numero));
 		this.add(jLabelNom, BorderLayout.CENTER);
@@ -138,5 +140,50 @@ public class JLigne extends JPanel {
 	@Override
 	public String toString() {
 		return "Ligne numéro " + numero + " à l'index " + index + "(x : " + getX() + ", y : " + getY() + ", width : " + getWidth() + ", height : " + getHeight();
+	}
+
+	@Override
+	public void setSize(Dimension d) {
+		super.setPreferredSize(d);
+		super.setSize(d);
+		updateCelluleSize(Double.valueOf(d.getHeight()).intValue());
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		super.setPreferredSize(new Dimension(width, height));
+		super.setSize(width, height);
+		updateCelluleSize(height);
+	}
+
+	private void updateCelluleSize(int height) {
+		Collection<JCellule> values = mapCelluleParIndexColonne.values();
+		for (JCellule jCellule : values) {
+			Dimension d = new Dimension(jCellule.getWidth(), height);
+			jCellule.setPreferredSize(d);
+			jCellule.setSize(d);
+		}
+	}
+
+	@Override
+	public void setLocation(int x, int y) {
+		super.setLocation(x, y);
+		jTableur.springLayout.putConstraint(SpringLayout.NORTH, this, y, SpringLayout.NORTH, jTableur);
+		updateCelluleLocation(y);
+	}
+
+	@Override
+	public void setLocation(Point p) {
+		super.setLocation(p);
+		updateCelluleLocation(p.y);
+	}
+
+	private void updateCelluleLocation(int y) {
+		Collection<JCellule> values = mapCelluleParIndexColonne.values();
+		for (JCellule jCellule : values) {
+			Point d = new Point(jCellule.getLocation().x, y);
+			jCellule.setLocation(d);
+			jTableur.springLayout.putConstraint(SpringLayout.NORTH, jCellule, y, SpringLayout.NORTH, jTableur);
+		}
 	}
 }

@@ -8,6 +8,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.Collection;
@@ -18,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
@@ -140,5 +142,50 @@ public class JColonne extends JPanel {
 	@Override
 	public String toString() {
 		return "Colonne numéro " + numero + " à l'index " + index + "(x : " + getX() + ", y : " + getY() + ", width : " + getWidth() + ", height : " + getHeight();
+	}
+
+	@Override
+	public void setSize(Dimension d) {
+		super.setPreferredSize(d);
+		super.setSize(d);
+		updateCelluleSize(Double.valueOf(d.getWidth()).intValue());
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		super.setPreferredSize(new Dimension(width, height));
+		super.setSize(width, height);
+		updateCelluleSize(width);
+	}
+
+	private void updateCelluleSize(int width) {
+		Collection<JCellule> values = mapCelluleParIndexLigne.values();
+		for (JCellule jCellule : values) {
+			Dimension d = new Dimension(width, jCellule.getHeight());
+			jCellule.setPreferredSize(d);
+			jCellule.setSize(d);
+		}
+	}
+
+	@Override
+	public void setLocation(int x, int y) {
+		super.setLocation(x, y);
+		jTableur.springLayout.putConstraint(SpringLayout.NORTH, this, y, SpringLayout.NORTH, jTableur);
+		updateCelluleLocation(x);
+	}
+
+	@Override
+	public void setLocation(Point p) {
+		super.setLocation(p);
+		updateCelluleLocation(p.x);
+	}
+
+	private void updateCelluleLocation(int x) {
+		Collection<JCellule> values = mapCelluleParIndexLigne.values();
+		for (JCellule jCellule : values) {
+			Point d = new Point(x, jCellule.getLocation().y);
+			jCellule.setLocation(d);
+			jTableur.springLayout.putConstraint(SpringLayout.WEST, jCellule, x, SpringLayout.WEST, jTableur);
+		}
 	}
 }
