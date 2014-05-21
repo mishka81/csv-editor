@@ -137,6 +137,8 @@ public class ColonneHelper {
 
 			replacerColonne(jColonne);
 
+			CelluleHelper.getInstance(jTableur2).genererCellule(0, jTableur2.listeLigne.size() - 1, index, index);
+
 			if (getCoordonneeDroite(index) >= jTableur2.getWidth()) {
 				break;
 			}

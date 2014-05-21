@@ -208,19 +208,19 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	public void setModeConsultation() {
 		this.mode = MODE_CONSULTATION;
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				JCellule.this.remove(getjTextContenu());
-				JCellule.this.add(getjLabelContenu());
-				if (celluleCorrespondante != null) {
-					getjLabelContenu().setText(celluleCorrespondante.getContenu());
-				}
-				getjLabelContenu().requestFocus();
-				JCellule.this.updateUI();
-			}
-		});
+		// SwingUtilities.invokeLater(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		JCellule.this.remove(getjTextContenu());
+		JCellule.this.add(getjLabelContenu());
+		if (celluleCorrespondante != null) {
+			getjLabelContenu().setText(celluleCorrespondante.getContenu());
+		}
+		getjLabelContenu().requestFocus();
+		JCellule.this.updateUI();
+		// }
+		// });
 	}
 
 	public void setModeEdition() {
@@ -271,9 +271,9 @@ public class JCellule extends JPanel implements CelluleListener {
 
 	@Override
 	public void onContenuChanged(String oldValue, String newValue) {
-		this.celluleCorrespondante.setContenu(newValue);
-		if (oldValue == null && newValue != null) {
-			this.setBackground(Color.WHITE);
-		}
+		// this.celluleCorrespondante.setContenu(newValue);
+		// if (oldValue == null && newValue != null) {
+		// this.setBackground(Color.WHITE);
+		// }
 	}
 }

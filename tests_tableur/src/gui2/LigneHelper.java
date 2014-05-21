@@ -135,7 +135,9 @@ public class LigneHelper {
 
 			replacerLigne(jLigne);
 
-			if (getCoordonneeBas(index) >= jTableur2.getWidth()) {
+			CelluleHelper.getInstance(jTableur2).genererCellule(index, index, 0, jTableur2.listeColonne.size() - 1);
+
+			if (getCoordonneeBas(index) >= jTableur2.getHeight()) {
 				break;
 			}
 		}

@@ -398,7 +398,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	 *            Index de la première colonne (0 est la colonne la plus à
 	 *            gauche)
 	 */
-	private void insererTitreDeColonne(int numeroColonneMin, int numeroColonneMax, int indexMin) {
+	private int insererTitreDeColonne(int numeroColonneMin, int numeroColonneMax, int indexMin) {
 		int indexDerniereColonneInseree = ColonneHelper.getInstance(this).insererComposantTitreDeColonne(numeroColonneMin, numeroColonneMax, indexMin);
 
 		// // Renumérote les colonnes suivantes
@@ -408,6 +408,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 
 		setValeurMaximumHorizontalScrollbar();
 		System.out.println("nombre de colonnes chargées (après insersion) : " + listeColonne.size());
+		return indexDerniereColonneInseree;
 	}
 
 	/**
@@ -420,7 +421,7 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 	 * @param index
 	 *            Index de la première ligne (0 est la ligne la plus en haut)
 	 */
-	private void insererNumeroDeLigne(int numeroLigneMin, int numeroLigneMax, int indexMin) {
+	private int insererNumeroDeLigne(int numeroLigneMin, int numeroLigneMax, int indexMin) {
 		int indexDerniereLigneInseree = LigneHelper.getInstance(this).insererComposantNumeroDeLigne(numeroLigneMin, numeroLigneMax, indexMin);
 
 		// // Renumérote les colonnes suivantes
@@ -430,13 +431,19 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 
 		setValeurMaximumVerticalScrollbar();
 		System.out.println("nombre de lignes chargées (après insersion) : " + listeLigne.size());
+		return indexDerniereLigneInseree;
 	}
 
-	private void creerZoneComposant(int numeroColonneMin, int numeroColonneMax, int numeroLigneMin, int numeroLigneMax) {
-		// TODO création des lignes/colonnes/cellules dans la zone choisie
-		insererTitreDeColonne(numeroColonneMin, numeroColonneMax, 0);
-		insererNumeroDeLigne(numeroLigneMin, numeroLigneMax, 0);
-		genererCellule(numeroLigneMin, numeroLigneMax, numeroColonneMin, numeroColonneMax);
+	private void creerZoneComposant(final int numeroColonneMin, final int numeroColonneMax, final int numeroLigneMin, final int numeroLigneMax) {
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				insererTitreDeColonne(numeroColonneMin, numeroColonneMax, 0);
+				insererNumeroDeLigne(numeroLigneMin, numeroLigneMax, 0);
+
+			}
+		});
 
 		// TODO Si il existe des colonnes/lignes après les limites de la zone
 		// choisie, les décaler
@@ -447,24 +454,6 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		// TODO si le décallage fait que la dernière ligne/colonne finit dans
 		// les limites du composant, on en charge d'autres jusqu'à revenir au
 		// bord du composant
-	}
-
-	private void genererCellule(int numeroLigneMin, int numeroLigneMax, int numeroColonneMin, int numeroColonneMax) {
-		for (int numeroLigne = numeroLigneMin; numeroLigne <= numeroLigneMax; numeroLigne++) {
-			for (int numeroColonne = numeroColonneMin; numeroColonne <= numeroColonneMax; numeroColonne++) {
-				JColonne colonne = listeColonne.get(numeroColonne);
-				JLigne ligne = listeLigne.get(numeroLigne);
-				JCellule jCellule = new JCellule(this, colonne, ligne, modele.getCellule(numeroLigne, numeroColonne), modele);
-				jCellule.setBounds(colonne.getX(), ligne.getY(), colonne.getWidth(), ligne.getHeight());
-				this.panelGrille.add(jCellule);
-				// nombreCellulesCrees++;
-				ligne.addCellule(jCellule);
-				colonne.addCellule(jCellule);
-				springLayout.putConstraint(SpringLayout.NORTH, jCellule, ligne.getY(), SpringLayout.NORTH, this);
-				springLayout.putConstraint(SpringLayout.WEST, jCellule, colonne.getX(), SpringLayout.WEST, this);
-			}
-		}
-
 	}
 
 	public void setLargeurColonne(JColonne colonne, int nouvelleLargeur) {
@@ -509,10 +498,11 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		}
 		// rajoute les colonnes à droite si besoin
 		while (droiteDerniereColonne < this.getWidth() && numeroDerniereColonne + 1 < modele.getNbColonnes()) {
-			insererTitreDeColonne(numeroDerniereColonne + 1, numeroDerniereColonne + 1, indexDerniereColonne + 1);
+			indexDerniereColonne = insererTitreDeColonne(numeroDerniereColonne + 1, numeroDerniereColonne + 1, indexDerniereColonne + 1);
 
 			jDerniereColonne = listeColonne.get(listeColonne.size() - 1);
 			droiteDerniereColonne = jDerniereColonne.getDroiteColonne();
+			numeroDerniereColonne++;
 		}
 
 	}
@@ -535,10 +525,11 @@ public class JTableur2 extends JPanel implements TableurModeleStructureListener 
 		}
 		// rajoute les colonnes à droite si besoin
 		while (basDerniereLigne < this.getHeight() && numeroDerniereLigne + 1 < modele.getNbLignes()) {
-			insererNumeroDeLigne(numeroDerniereLigne + 1, numeroDerniereLigne + 1, indexDerniereLigne + 1);
+			indexDerniereLigne = insererNumeroDeLigne(numeroDerniereLigne + 1, numeroDerniereLigne + 1, indexDerniereLigne + 1);
 
 			jDerniereLigne = listeLigne.get(listeLigne.size() - 1);
 			basDerniereLigne = jDerniereLigne.getBasLigne();
+			numeroDerniereLigne++;
 		}
 
 	}
